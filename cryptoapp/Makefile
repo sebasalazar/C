@@ -31,9 +31,9 @@ OBJECTFILES= \
 
 # C Compiler Flags
 #DEBUG
-CFLAGS=-Wall -g3
+#CFLAGS=-Wall -DDEBUG -g3
 #Sin Debug
-#CFLAGS=
+CFLAGS=-Wall -g3
 
 # CC Compiler Flags
 CCFLAGS=
