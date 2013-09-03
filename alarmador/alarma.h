@@ -22,10 +22,18 @@ extern "C" {
 #include <unistd.h>
 #endif	
 
-    typedef __sighandler_t sig_handler_t;
+#ifdef __WIN32__
+    static unsigned int wintimer;
+    void CALLBACK alarma(UINT uTimerID, UINT info, DWORD dwUser, DWORD dw1, DWORD dw2);
+#else
+    void alarma();
+#endif
 
-    void alarmar(int timeout, sig_handler_t funcion);
+    static int genero_alarma = 0;
+
+    void alarmar(int timeout);
     void tranquilizar();
+    int is_alarmado();
 
 
 #ifdef	__cplusplus

@@ -42,7 +42,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-lwinmm
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
