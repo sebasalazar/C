@@ -9,6 +9,9 @@
 #ifdef __WIN32__
 
 void CALLBACK alarma(UINT uTimerID, UINT info, DWORD dwUser, DWORD dw1, DWORD dw2) {
+    int thid = GetCurrentThreadId();
+    fprintf(stderr, "\nThread Original: %d # Thread Actual: %d", dwUser, thid);
+
     genero_alarma = 1;
 }
 #else
@@ -21,7 +24,8 @@ void alarma() {
 
 void alarmar(int timeout) {
 #ifdef __WIN32__
-    wintimer = timeSetEvent((timeout * 1000), 10, alarma, 0, TIME_ONESHOT);
+    int thid = GetCurrentThreadId();
+    wintimer = timeSetEvent((timeout * 1000), 10, alarma, thid, TIME_ONESHOT);
 #else
     alarm(0);
     signal(SIGALRM, alarma);

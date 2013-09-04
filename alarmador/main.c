@@ -16,9 +16,10 @@ int main(int argc, char** argv) {
 
     alarmar(5);
 #ifdef __WIN32__
-    Sleep(4 * 1000);
+    fprintf(stderr,"\nThread id: %d", GetCurrentThreadId());
+    Sleep(10 * 1000);
 #else
-    sleep(4);
+    sleep(10);
 #endif
     tranquilizar();
 

@@ -18,6 +18,7 @@ extern "C" {
 
 #ifdef __WIN32__
 #include <windows.h>
+#include <winbase.h>
 #else
 #include <unistd.h>
 #endif	

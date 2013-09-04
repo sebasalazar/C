@@ -42,13 +42,13 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lwinmm -lws2_32 -lgdi32
+LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f Makefile ${CND_DISTDIR}/alarmador
 
-${CND_DISTDIR}/alarmador: ${OBJECTFILES}
+${CND_DISTDIR}/cryptoapp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}
 	${LINK.c} -o ${CND_DISTDIR}/alarmador ${OBJECTFILES} ${LDLIBSOPTIONS} 
 	${RM} -fr ${CND_BUILDDIR}
