@@ -50,11 +50,31 @@ extern "C" {
         double stddev;
     } alumno_ramo;
 
+    typedef struct {
+        long lugar;
+        char* asignatura;
+        double nota;
+        double stddev;
+        int semestre;
+        int anio;
+    } ranking_ramo;
+
+    typedef struct {
+        long lugar;
+        int estudiante_id;
+        double nota;
+        double stddev;
+        int semestre;
+        int anio;
+    } ranking_alumno;
 
     ramo *consultar_asignatura(char* asignatura);
     profesor *consultar_docente(long docente_id);
     alumno *consultar_estudiante(long estudiante_id);
     alumno_ramo *consultar_asignatura_por_estudiante(long estudiante_id, long *tamano);
+    alumno_ramo *consultar_notas_por_estudiante(long estudiante_id, long *tamano);
+    ranking_ramo *ranking_asignaturas(int semestre, int anio, long *tamano);
+    ranking_alumno *ranking_estudiantes(int semestre, int anio, long *tamano);
 
 #ifdef	__cplusplus
 }

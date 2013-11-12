@@ -1,4 +1,5 @@
 #include "tareas.h"
+#include "utils.h"
 
 ramo *consultar_asignatura(char* asignatura) {
     ramo *r = NULL;
@@ -205,8 +206,6 @@ alumno_ramo *consultar_asignatura_por_estudiante(long estudiante_id, long *taman
             if (num > 0) {
                 arreglo = (alumno_ramo *) malloc(num * sizeof (alumno_ramo));
                 for (i = 0; i < num; i++) {
-                    //                    arreglo = (alumno_ramo *) realloc(arreglo, (i + 1) * sizeof (alumno_ramo));
-
                     memset(asignatura, 0, sizeof (asignatura));
                     sprintf(asignatura, "%s", getString(dbresult(resultado, i, 0)));
 
@@ -222,8 +221,121 @@ alumno_ramo *consultar_asignatura_por_estudiante(long estudiante_id, long *taman
         }
     }
 
-    
+
     *tamano = (long) num;
     return arreglo;
 }
 
+alumno_ramo *consultar_notas_por_estudiante(long estudiante_id, long *tamano) {
+    alumno_ramo *arreglo = NULL;
+    char sql[512];
+    char asignatura[128];
+    int i = 0;
+    int num = 0;
+    PGconn *conexion = NULL;
+    PGresult *resultado = NULL;
+
+    if (estudiante_id > 0) {
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT cursos.asignatura, asignaturas_cursadas.nota FROM cursos INNER JOIN asignaturas_cursadas ON cursos.curso_id=asignaturas_cursadas.curso_id WHERE estudiante_id='%ld' ORDER BY cursos.anio ASC, cursos.semestre ASC", estudiante_id);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                arreglo = (alumno_ramo *) malloc(num * sizeof (alumno_ramo));
+                for (i = 0; i < num; i++) {
+                    memset(asignatura, 0, sizeof (asignatura));
+                    sprintf(asignatura, "%s", getString(dbresult(resultado, i, 0)));
+
+                    arreglo[i].asignatura = (char *) calloc(strlen(asignatura) + 1, sizeof (char));
+                    sprintf(arreglo[i].asignatura, "%s", asignatura);
+                    arreglo[i].estudiante_id = estudiante_id;
+                    arreglo[i].nota = getDouble(dbresult(resultado, i, 1));
+                    arreglo[i].stddev = 0.0;
+                }
+                dbfree(resultado);
+            }
+            dbclose(conexion);
+        }
+    }
+
+
+    *tamano = (long) num;
+    return arreglo;
+}
+
+ranking_ramo *ranking_asignaturas(int semestre, int anio, long *tamano) {
+    ranking_ramo *ranking = NULL;
+    char sql[512];
+    char asignatura[128];
+    int i = 0;
+    int num = 0;
+    PGconn *conexion = NULL;
+    PGresult *resultado = NULL;
+
+    if (semestre > 0 && anio > 0) {
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT cursos.asignatura, AVG(asignaturas_cursadas.nota) AS promedio, STDDEV(asignaturas_cursadas.nota) FROM cursos INNER JOIN asignaturas_cursadas ON cursos.curso_id=asignaturas_cursadas.curso_id WHERE cursos.semestre='%d' AND cursos.anio='%d' GROUP BY cursos.asignatura ORDER BY promedio DESC", semestre, anio);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                ranking = (ranking_ramo *) malloc(num * sizeof (ranking_ramo));
+                for (i = 0; i < num; i++) {
+                    memset(asignatura, 0, sizeof (asignatura));
+                    sprintf(asignatura, "%s", getString(dbresult(resultado, i, 0)));
+
+                    ranking[i].lugar = i + 1;
+                    ranking[i].asignatura = (char *) calloc(strlen(asignatura) + 1, sizeof (char));
+                    sprintf(ranking[i].asignatura, "%s", asignatura);
+                    ranking[i].nota = getDouble(dbresult(resultado, i, 1));
+                    ranking[i].stddev = getDouble(dbresult(resultado, i, 2));
+                    ranking[i].semestre = semestre;
+                    ranking[i].anio = anio;
+                }
+                dbfree(resultado);
+            }
+            dbclose(conexion);
+        }
+    }
+    *tamano = num;
+
+    return ranking;
+}
+
+ranking_alumno *ranking_estudiantes(int semestre, int anio, long *tamano) {
+    ranking_alumno *ranking = NULL;
+    char sql[512];
+    int i = 0;
+    int num = 0;
+    PGconn *conexion = NULL;
+    PGresult *resultado = NULL;
+
+    if (semestre > 0 && anio > 0) {
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT asignaturas_cursadas.estudiante_id, AVG(asignaturas_cursadas.nota) AS promedio, STDDEV(asignaturas_cursadas.nota) FROM cursos INNER JOIN asignaturas_cursadas ON cursos.curso_id=asignaturas_cursadas.curso_id WHERE cursos.semestre='%d' AND cursos.anio='%d' GROUP BY asignaturas_cursadas.estudiante_id ORDER BY promedio DESC", semestre, anio);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                ranking = (ranking_alumno *) malloc(num * sizeof (ranking_alumno));
+                for (i = 0; i < num; i++) {
+                    ranking[i].lugar = i + 1;
+                    ranking[i].estudiante_id = getLong(dbresult(resultado, i, 0));
+                    ranking[i].nota = getDouble(dbresult(resultado, i, 1));
+                    ranking[i].stddev = getDouble(dbresult(resultado, i, 2));
+                    ranking[i].semestre = semestre;
+                    ranking[i].anio = anio;
+                }
+                dbfree(resultado);
+            }
+            dbclose(conexion);
+        }
+    }
+    *tamano = num;
+
+    return ranking;
+}
