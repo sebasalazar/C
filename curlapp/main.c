@@ -13,9 +13,9 @@
 int main(int argc, char** argv) {
 
     fprintf(stdout, "\nEjemplo de uso Curl en C\n\t\tDesarrollado por Sebastian Salazar Molina\n");
-    char* mensaje = "var=seba";
+    char* mensaje = "txtRUN=159978869";
     fprintf(stdout, "\nMensaje Enviado: %s\n", mensaje);
-    char* respuesta = comunicar("https://sebastian.cl", 443, "/~seba/seba_curl.php", mensaje, 0);
+    char* respuesta = comunicar("http://consulta.servel.cl", 80, "/", mensaje, 0);
     if (respuesta != NULL) {
         fprintf(stderr, "\nRespuesta : %s\n", respuesta);
     } else {
