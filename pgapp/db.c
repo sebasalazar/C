@@ -52,6 +52,10 @@ char* dbresult(PGresult *res, int fila, int columna) {
     return resultado;
 }
 
+void dbfree(PGresult *res) {
+    PQclear(res);
+}
+
 char* getString(char *texto) {
     char* resultado = NULL;
 

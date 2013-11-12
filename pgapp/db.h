@@ -28,6 +28,7 @@ extern "C" {
     PGresult* dbquery(PGconn* conexion, char* sql);
     long dbnumrows(PGresult *res);
     char* dbresult(PGresult *res, int fila, int columna);
+    void dbfree(PGresult *res);
     char* getString(char *texto);
     long getLong(char *texto);
     int getInt(char *texto);
