@@ -22,6 +22,7 @@ OBJECTDIR=${CND_BUILDDIR}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/db.o \
+	${OBJECTDIR}/tareas.o \
 	${OBJECTDIR}/main.o
 
 
@@ -65,7 +66,11 @@ ${OBJECTDIR}/db.o: db.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/db.o db.c
-	
+
+${OBJECTDIR}/tareas.o: tareas.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/tareas.o tareas.c	
 
 # Clean Targets
 clean: ${CLEAN_SUBPROJECTS}

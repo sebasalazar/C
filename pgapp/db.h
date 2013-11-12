@@ -17,6 +17,12 @@ extern "C" {
 #include <string.h>
 #include <libpq-fe.h>
 
+#define SERVIDOR "146.83.181.4"
+#define PUERTO 6432
+#define NOMBREDB "iswdb"
+#define USUARIODB "isw"
+#define PASSDB "isw"
+
     PGconn* dbconnect(char* servidor, int puerto, char* nombredb, char* usuario, char* password);
     void dbclose(PGconn* conexion);
     PGresult* dbquery(PGconn* conexion, char* sql);
@@ -26,7 +32,7 @@ extern "C" {
     long getLong(char *texto);
     int getInt(char *texto);
     double getDouble(char *texto);
-    
+
 
 #ifdef	__cplusplus
 }
