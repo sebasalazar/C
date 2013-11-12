@@ -19,6 +19,7 @@ int main(int argc, char** argv) {
     PGconn *conexion = NULL;
     PGresult *resultado = NULL;
     ramo *asignatura = NULL;
+    profesor *docente = NULL;
 
     conexion = dbconnect("146.83.181.4", 6432, "iswdb", "isw", "isw");
     resultado = dbquery(conexion, "SELECT NOW(), CAST(10 AS int)");
@@ -30,6 +31,11 @@ int main(int argc, char** argv) {
         fprintf(stdout, "\nAsignatura: %s Aprobacion: %lf Reprobacion: %lf Promedio: %lf Desviacion Estandar: %lf\n", asignatura->asignatura, asignatura->aprobacion, asignatura->reprobacion, asignatura->promedio, asignatura->stddev);
     }
 
+    docente = consultar_docente(21);
+    if (docente != NULL) {
+        fprintf(stdout, "\nDocente_id: %ld Aprobacion: %lf Reprobacion: %lf Promedio: %lf Desviacion Estandar: %lf\n", docente->docente_id, docente->aprobacion, docente->reprobacion, docente->promedio, docente->stddev);
+    }
+    
     return (EXIT_SUCCESS);
 }
 

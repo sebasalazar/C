@@ -38,9 +38,20 @@ extern "C" {
         double aprobacion;
         double reprobacion;
         double promedio;
+        double mediana;
         double stddev;
     } alumno;
 
+    typedef struct {
+        char* asignatura;
+        long estudiante_id;
+        double aprobacion;
+        double reprobacion;
+        double promedio;
+        double stddev;
+    } alumno_ramo ;
+    
+    
     ramo *consultar_asignatura(char* asignatura);
     profesor *consultar_docente(long docente_id);
     alumno *consultar_estudiante(long estudiante_id);
