@@ -20,7 +20,8 @@ extern "C" {
     long getLong(char *texto);
     int getInt(char *texto);
     double getDouble(char *texto);
-
+    char* leer_string(char *label);
+    long leer_long(char *label);
 #ifdef	__cplusplus
 }
 #endif

@@ -8,55 +8,57 @@ ramo *consultar_asignatura(char* asignatura) {
     PGconn *conexion = NULL;
     PGresult *resultado = NULL;
 
-    r = (ramo *) malloc(sizeof (ramo));
-    r->asignatura = (char *) calloc(strlen(asignatura) + 1, sizeof (asignatura));
-    r->aprobacion = 0.0;
-    r->reprobacion = 0.0;
-    r->promedio = 0.0;
-    r->stddev = 0.0;
-    sprintf(r->asignatura, "%s", asignatura);
+    if (strlen(asignatura) > 0) {
+        r = (ramo *) malloc(sizeof (ramo));
+        r->asignatura = (char *) calloc(strlen(asignatura) + 1, sizeof (asignatura));
+        r->aprobacion = 0.0;
+        r->reprobacion = 0.0;
+        r->promedio = 0.0;
+        r->stddev = 0.0;
+        sprintf(r->asignatura, "%s", asignatura);
 
-    // Busco Reprobados
-    memset(sql, 0, sizeof (sql));
-    sprintf(sql, "SELECT AVG(nota) FROM asignaturas_cursadas WHERE curso_id IN (SELECT curso_id FROM cursos WHERE asignatura = '%s') AND nota < 4", asignatura);
-    conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
-    if (conexion != NULL) {
-        resultado = dbquery(conexion, sql);
-        num = dbnumrows(resultado);
-        if (num > 0) {
-            r->reprobacion = getDouble(dbresult(resultado, 0, 0));
-            dbfree(resultado);
+        // Busco Reprobados
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT AVG(nota) FROM asignaturas_cursadas WHERE curso_id IN (SELECT curso_id FROM cursos WHERE UPPER(asignatura) = UPPER('%s')) AND nota < 4", asignatura);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                r->reprobacion = getDouble(dbresult(resultado, 0, 0));
+                dbfree(resultado);
+            }
+            dbclose(conexion);
         }
-        dbclose(conexion);
-    }
 
-    // Busco Aprobados
-    memset(sql, 0, sizeof (sql));
-    sprintf(sql, "SELECT AVG(nota) FROM asignaturas_cursadas WHERE curso_id IN (SELECT curso_id FROM cursos WHERE asignatura = '%s') AND nota >= 4", asignatura);
-    conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
-    if (conexion != NULL) {
-        resultado = dbquery(conexion, sql);
-        num = dbnumrows(resultado);
-        if (num > 0) {
-            r->aprobacion = getDouble(dbresult(resultado, 0, 0));
-            dbfree(resultado);
+        // Busco Aprobados
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT AVG(nota) FROM asignaturas_cursadas WHERE curso_id IN (SELECT curso_id FROM cursos WHERE UPPER(asignatura) = UPPER('%s')) AND nota >= 4", asignatura);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                r->aprobacion = getDouble(dbresult(resultado, 0, 0));
+                dbfree(resultado);
+            }
+            dbclose(conexion);
         }
-        dbclose(conexion);
-    }
 
-    // Busco Promedio
-    memset(sql, 0, sizeof (sql));
-    sprintf(sql, "SELECT AVG(nota), STDDEV(nota) FROM asignaturas_cursadas WHERE curso_id IN (SELECT curso_id FROM cursos WHERE asignatura = '%s')", asignatura);
-    conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
-    if (conexion != NULL) {
-        resultado = dbquery(conexion, sql);
-        num = dbnumrows(resultado);
-        if (num > 0) {
-            r->promedio = getDouble(dbresult(resultado, 0, 0));
-            r->stddev = getDouble(dbresult(resultado, 0, 1));
-            dbfree(resultado);
+        // Busco Promedio
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT AVG(nota), STDDEV(nota) FROM asignaturas_cursadas WHERE curso_id IN (SELECT curso_id FROM cursos WHERE UPPER(asignatura) = UPPER('%s'))", asignatura);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                r->promedio = getDouble(dbresult(resultado, 0, 0));
+                r->stddev = getDouble(dbresult(resultado, 0, 1));
+                dbfree(resultado);
+            }
+            dbclose(conexion);
         }
-        dbclose(conexion);
     }
 
     return r;
@@ -339,3 +341,39 @@ ranking_alumno *ranking_estudiantes(int semestre, int anio, long *tamano) {
 
     return ranking;
 }
+
+ranking_profesor *ranking_docentes(int semestre, int anio, long *tamano) {
+    ranking_profesor *ranking = NULL;
+    char sql[512];
+    int i = 0;
+    int num = 0;
+    PGconn *conexion = NULL;
+    PGresult *resultado = NULL;
+
+    if (semestre > 0 && anio > 0) {
+        memset(sql, 0, sizeof (sql));
+        sprintf(sql, "SELECT cursos.docente_id, AVG(asignaturas_cursadas.nota) AS promedio, STDDEV(asignaturas_cursadas.nota) FROM cursos INNER JOIN asignaturas_cursadas ON cursos.curso_id=asignaturas_cursadas.curso_id WHERE cursos.semestre='%d' AND cursos.anio='%d' GROUP BY cursos.docente_id ORDER BY promedio DESC", semestre, anio);
+        conexion = dbconnect(SERVIDOR, PUERTO, NOMBREDB, USUARIODB, PASSDB);
+        if (conexion != NULL) {
+            resultado = dbquery(conexion, sql);
+            num = dbnumrows(resultado);
+            if (num > 0) {
+                ranking = (ranking_profesor *) malloc(num * sizeof (ranking_profesor));
+                for (i = 0; i < num; i++) {
+                    ranking[i].lugar = i + 1;
+                    ranking[i].docente_id = getLong(dbresult(resultado, i, 0));
+                    ranking[i].nota = getDouble(dbresult(resultado, i, 1));
+                    ranking[i].stddev = getDouble(dbresult(resultado, i, 2));
+                    ranking[i].semestre = semestre;
+                    ranking[i].anio = anio;
+                }
+                dbfree(resultado);
+            }
+            dbclose(conexion);
+        }
+    }
+    *tamano = num;
+
+    return ranking;
+}
+

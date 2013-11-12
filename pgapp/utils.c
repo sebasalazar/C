@@ -37,3 +37,33 @@ double getDouble(char *texto) {
     return resultado;
 }
 
+char* leer_string(char *label) {
+    char *resultado = NULL;
+    char buffer[512];
+    int largo = 0;
+
+    memset(buffer, 0, sizeof (buffer));
+    fprintf(stdout, "\n\t%s", label);
+    fflush(NULL);
+    getchar();
+    fgets(buffer, sizeof (buffer), stdin);
+
+    largo = strlen(buffer);
+    if (largo > 0 && buffer[largo - 1] == '\n') {
+        buffer[largo - 1] = '\0';
+    }
+
+    resultado = (char *) calloc(strlen(buffer), sizeof (char));
+    sprintf(resultado, "%s", buffer);
+
+    return resultado;
+}
+
+long leer_long(char *label) {
+    long resultado = 0;
+
+    fprintf(stdout, "\n\t%s", label);
+    scanf("%ld", &resultado);
+
+    return resultado;
+}

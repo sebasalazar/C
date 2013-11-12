@@ -68,6 +68,15 @@ extern "C" {
         int anio;
     } ranking_alumno;
 
+    typedef struct {
+        long lugar;
+        int docente_id;
+        double nota;
+        double stddev;
+        int semestre;
+        int anio;
+    } ranking_profesor;
+
     ramo *consultar_asignatura(char* asignatura);
     profesor *consultar_docente(long docente_id);
     alumno *consultar_estudiante(long estudiante_id);
@@ -75,6 +84,7 @@ extern "C" {
     alumno_ramo *consultar_notas_por_estudiante(long estudiante_id, long *tamano);
     ranking_ramo *ranking_asignaturas(int semestre, int anio, long *tamano);
     ranking_alumno *ranking_estudiantes(int semestre, int anio, long *tamano);
+    ranking_profesor *ranking_docentes(int semestre, int anio, long *tamano);
 
 #ifdef	__cplusplus
 }

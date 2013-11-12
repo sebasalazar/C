@@ -7,30 +7,150 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <libpq-fe.h>
 #include "db.h"
 #include "utils.h"
 #include "tareas.h"
+
+void prueba();
 
 /*
  * 
  */
 int main(int argc, char** argv) {
-    PGconn *conexion = NULL;
-    PGresult *resultado = NULL;
     ramo *asignatura = NULL;
     profesor *docente = NULL;
     alumno *estudiante = NULL;
     alumno_ramo *promedios = NULL;
     ranking_ramo *rkg_ramos = NULL;
     ranking_alumno *rkg_alumnos = NULL;
+    ranking_profesor *rkg_profesores = NULL;
+    int opcion = 0;
     long i = 0;
     long cant_ramos = 0;
+    long docente_id = 0;
+    long estudiante_id = 0;
+    char *cadena = NULL;
 
-    conexion = dbconnect("146.83.181.4", 6432, "iswdb", "isw", "isw");
-    resultado = dbquery(conexion, "SELECT NOW(), CAST(10 AS int)");
-    fprintf(stdout, "\nAhora: %s # Diez: %d\n", getString(dbresult(resultado, 0, 0)), getInt(dbresult(resultado, 0, 1)));
-    dbclose(conexion);
+    do {
+        fprintf(stdout, "\n\t OPCIONES");
+        fprintf(stdout, "\n1)\t Obtener nota de aprobacion y reprobacion por asignatura");
+        fprintf(stdout, "\n2)\t Obtener promedio y desviacion estandar por asignatura");
+        fprintf(stdout, "\n3)\t Obtener nota de aprobacion y reprobacion por docente");
+        fprintf(stdout, "\n4)\t Obtener promedio y desviacion estandar por docente");
+        fprintf(stdout, "\n5)\t Obtener nota de aprobacion y reprobacion por estudiante por asignatura");
+        fprintf(stdout, "\n6)\t Obtener promedio y desviacion estandar por estudiante por asignatura");
+        fprintf(stdout, "\n7)\t Obtener promedio, mediana y desviacion estandar por estudiante");
+        fprintf(stdout, "\n8)\t Rankear Asignaturas por semestre y anio");
+        fprintf(stdout, "\n9)\t Rankear Estudiantes por semestre y anio");
+        fprintf(stdout, "\n10)\t Datos de Prueba");
+        fprintf(stdout, "\n0)\t SALIR");
+
+        fprintf(stdout, "\n Escojer opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                cadena = leer_string("\nIngrese la asignatura: ");
+                asignatura = consultar_asignatura(cadena);
+                if (asignatura != NULL) {
+                    if (asignatura->promedio >= 1) {
+                        fprintf(stdout, "\nAsignatura: %s\t Aprobacion: %lf\t Reprobacion: %lf", asignatura->asignatura, asignatura->aprobacion, asignatura->reprobacion);
+                    } else {
+                        fprintf(stdout, "\nAsignatura %s no encontrada", cadena);
+                    }
+                    free(asignatura);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
+                free(cadena);
+                break;
+
+            case 2:
+                cadena = leer_string("\nIngrese la asignatura: ");
+                asignatura = consultar_asignatura(cadena);
+                if (asignatura != NULL) {
+                    if (asignatura->promedio >= 1) {
+                        fprintf(stdout, "\nAsignatura: %s\t Promedio: %lf\t Desviacion Estandar: %lf", asignatura->asignatura, asignatura->promedio, asignatura->stddev);
+                    } else {
+                        fprintf(stdout, "\nAsignatura %s no encontrada", cadena);
+                    }
+                    free(asignatura);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
+                free(cadena);
+                break;
+
+            case 3:
+                docente_id = leer_long("\nIngrese el id de Docente: ");
+                docente = consultar_docente(docente_id);
+                if (docente != NULL) {
+                    if (docente->promedio >= 1) {
+                        fprintf(stdout, "\nDocente id: %ld\t Aprobacion: %lf\t Reprobacion: %lf", docente->docente_id, docente->aprobacion, docente->reprobacion);
+                    } else {
+                        fprintf(stdout, "\nDocente %ld no tiene ramos", docente_id);
+                    }
+                    free(docente);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
+                break;
+
+            case 4:
+                docente_id = leer_long("\nIngrese el id de Docente: ");
+                docente = consultar_docente(docente_id);
+                if (docente != NULL) {
+                    if (docente->promedio >= 1) {
+                        fprintf(stdout, "\nDocente id: %ld\t Promedio: %lf\t Desviacion Estandar: %lf", docente->docente_id, docente->promedio, docente->stddev);
+                    } else {
+                        fprintf(stdout, "\nDocente %ld no tiene ramos", docente_id);
+                    }
+                    free(docente);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
+                break;
+
+            case 5:
+                break;
+
+            case 6:
+                break;
+
+            case 7:
+                break;
+
+            case 8:
+                break;
+
+            case 9:
+                break;
+
+            case 10:
+                break;
+
+            default:
+                opcion = 0;
+                break;
+        }
+
+    } while (opcion != 0);
+
+    fprintf(stdout, "\n\n\tFin del programa\t -\t Sebastian Salazar Molina.\t @sebastian_sm\n");
+
+    return (EXIT_SUCCESS);
+}
+
+void prueba() {
+    ramo *asignatura = NULL;
+    profesor *docente = NULL;
+    alumno *estudiante = NULL;
+    alumno_ramo *promedios = NULL;
+    ranking_ramo *rkg_ramos = NULL;
+    ranking_alumno *rkg_alumnos = NULL;
+    ranking_profesor *rkg_profesores = NULL;
+    long i = 0;
+    long cant_ramos = 0;
 
     asignatura = consultar_asignatura("CALCULO I");
     if (asignatura != NULL) {
@@ -71,7 +191,7 @@ int main(int argc, char** argv) {
     rkg_ramos = ranking_asignaturas(1, 2010, &cant_ramos);
     if (rkg_ramos) {
         for (i = 0; i < cant_ramos; i++) {
-            fprintf(stdout, "\n Lugar: %ld Asignatura: %s Promedio: %lf Desviacion Estandar: %lf Semestre: %d Anio: %d", rkg_ramos[i].lugar, rkg_ramos[i].asignatura, rkg_ramos[i].nota, rkg_ramos[i].stddev, rkg_ramos[i].semestre, rkg_ramos[i].anio);
+            fprintf(stdout, "\n Lugar: %ld\t Asignatura: %s\t Promedio: %lf\t Desviacion Estandar: %lf\t Semestre: %d\t Anio: %d", rkg_ramos[i].lugar, rkg_ramos[i].asignatura, rkg_ramos[i].nota, rkg_ramos[i].stddev, rkg_ramos[i].semestre, rkg_ramos[i].anio);
         }
         free(rkg_ramos);
     }
@@ -84,8 +204,11 @@ int main(int argc, char** argv) {
         free(rkg_alumnos);
     }
 
-    fprintf(stdout, "\n\n\tFin del programa\t -\t Sebastian Salazar Molina.\t @sebastian_sm\n");
-
-    return (EXIT_SUCCESS);
+    rkg_profesores = ranking_docentes(1, 2012, &cant_ramos);
+    if (rkg_profesores) {
+        for (i = 0; i < cant_ramos; i++) {
+            fprintf(stdout, "\n Lugar: %ld\t Docente id: %d\t Promedio: %lf\t Desviacion Estandar: %lf\t Semestre: %d\t Anio: %d", rkg_profesores[i].lugar, rkg_profesores[i].docente_id, rkg_profesores[i].nota, rkg_profesores[i].stddev, rkg_profesores[i].semestre, rkg_profesores[i].anio);
+        }
+        free(rkg_profesores);
+    }
 }
-
