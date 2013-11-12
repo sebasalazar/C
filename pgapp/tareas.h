@@ -15,8 +15,9 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 #include "db.h"
-    
+
     typedef struct {
         char* asignatura;
         double aprobacion;
@@ -32,7 +33,7 @@ extern "C" {
         double promedio;
         double stddev;
     } profesor;
-    
+
     typedef struct {
         long estudiante_id;
         double aprobacion;
@@ -45,17 +46,16 @@ extern "C" {
     typedef struct {
         char* asignatura;
         long estudiante_id;
-        double aprobacion;
-        double reprobacion;
-        double promedio;
+        double nota;
         double stddev;
-    } alumno_ramo ;
-    
-    
+    } alumno_ramo;
+
+
     ramo *consultar_asignatura(char* asignatura);
     profesor *consultar_docente(long docente_id);
     alumno *consultar_estudiante(long estudiante_id);
-    
+    alumno_ramo *consultar_asignatura_por_estudiante(long estudiante_id, long *tamano);
+
 #ifdef	__cplusplus
 }
 #endif

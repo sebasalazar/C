@@ -16,6 +16,7 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <libpq-fe.h>
+#include "utils.h"
 
 #define SERVIDOR "146.83.181.4"
 #define PUERTO 6432
@@ -29,10 +30,7 @@ extern "C" {
     long dbnumrows(PGresult *res);
     char* dbresult(PGresult *res, int fila, int columna);
     void dbfree(PGresult *res);
-    char* getString(char *texto);
-    long getLong(char *texto);
-    int getInt(char *texto);
-    double getDouble(char *texto);
+    
 
 
 #ifdef	__cplusplus
