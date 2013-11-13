@@ -15,7 +15,6 @@ AS=as
 CND_DISTDIR=dist
 CND_BUILDDIR=build
 
-
 # Object Directory
 OBJECTDIR=${CND_BUILDDIR}
 
@@ -31,7 +30,7 @@ OBJECTFILES= \
 #DEBUG
 #CFLAGS=-Wall -DDEBUG -g3
 #Sin Debug
-CFLAGS=-Wall -g3
+CFLAGS=-Wall -g3 -I".\win32"
 
 # CC Compiler Flags
 CCFLAGS=
@@ -44,15 +43,16 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lpq
+LDLIBSOPTIONS= -L".\win32" -lpq 
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f Makefile ${CND_DISTDIR}/pgapp
+	"${MAKE}"  -f Makefile.win ${CND_DISTDIR}/pgapp
 
 ${CND_DISTDIR}/pgapp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}
-	${LINK.c} -o ${CND_DISTDIR}/pgapp ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.c} -o ${CND_DISTDIR}/pgapp ${OBJECTFILES} ${LDLIBSOPTIONS}
+        ${CP} win32/*.dll ${CND_DISTDIR}/pgapp
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr core
 
