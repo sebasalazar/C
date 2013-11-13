@@ -10,12 +10,12 @@ Ejecutar el binario pgapp que está en la carpeta dist
 
 Pasos Para la compilación en Windows
 
-Asumiendo un sistema Windows 7
+Asumiendo un sistema Windows 7, simplifiqué toda la complejidad de la instalación en Windows 
+con la carpeta win32, sin embargo tengan presente que es un ABERRACIÓN publicar binarios en un repositorio, 
+sólo se los subo para que les sea fácil revisar y no se pierdan en las ramas.
 
 Instalar MinGW - http://www.mingw.org/
 
-Instalar NetBeans (opcional) - http://netbeans.org/
+Instalar NetBeans - http://netbeans.org/
 
-Instalar PostgreSQL - http://get.enterprisedb.com/postgresql/postgresql-9.3.1-1-windows.exe
-
-C:\Program Files\PostgreSQL\9.3
+Seleccionar el ambiente "Windows" y ejecutar el proyecto desde el IDE.
