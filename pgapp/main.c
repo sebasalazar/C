@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
                 promedios = consultar_notas_por_estudiante(estudiante_id, &cant_ramos);
                 if (promedios != NULL) {
                     for (i = 0; i < cant_ramos; i++) {
-                        fprintf(stdout, "\nEstudiante id: %ld\t Asignatura: %s\t Nota: %lf", promedios[i].estudiante_id, promedios[i].asignatura, estudiante->promedio);
+                        fprintf(stdout, "\nEstudiante id: %ld\t Asignatura: %s\t Nota: %lf", promedios[i].estudiante_id, promedios[i].asignatura, promedios[i].nota);
                     }
                     free(promedios);
                 } else {
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
                 promedios = consultar_asignatura_por_estudiante(estudiante_id, &cant_ramos);
                 if (promedios != NULL) {
                     for (i = 0; i < cant_ramos; i++) {
-                        fprintf(stdout, "\nEstudiante id: %ld\t Asignatura: %s\t Promedio: %lf\t Desviacion Estandar: %lf", promedios[i].estudiante_id, promedios[i].asignatura, estudiante->promedio, estudiante->stddev);
+                        fprintf(stdout, "\nEstudiante id: %ld\t Asignatura: %s\t Promedio: %lf\t Desviacion Estandar: %lf", promedios[i].estudiante_id, promedios[i].asignatura, promedios[i].nota, promedios[i].stddev);
                     }
                     free(promedios);
                 } else {
