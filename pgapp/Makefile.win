@@ -52,7 +52,7 @@ LDLIBSOPTIONS= -L".\win32" -lpq
 ${CND_DISTDIR}/pgapp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}
 	${LINK.c} -o ${CND_DISTDIR}/pgapp ${OBJECTFILES} ${LDLIBSOPTIONS}
-        ${CP} win32/*.dll ${CND_DISTDIR}/pgapp
+	${CP} win32/*.dll ${CND_DISTDIR}/
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr core
 
