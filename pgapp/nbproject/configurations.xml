@@ -6,6 +6,9 @@
       <in>db.h</in>
       <in>main.c</in>
       <in>tareas.c</in>
+      <in>tareas.h</in>
+      <in>utils.c</in>
+      <in>utils.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -44,6 +47,12 @@
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="tareas.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="tareas.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="utils.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="utils.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

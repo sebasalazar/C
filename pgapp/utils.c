@@ -17,8 +17,15 @@ void limpiar(void) {
 }
 
 void pausa(void) {
+    int hack = 0;
+    do {
+        fflush(stdin);
+        hack = fgetc(stdin);
+        fflush(stdout);
+    } while (hack != EOF && hack != '\n');
+
     fprintf(stdout, "\nPresione enter para continuar...\n");
-    getchar(); getchar();
+    getchar();
 }
 #endif                          /* POSIX */
 
