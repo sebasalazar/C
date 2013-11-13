@@ -211,6 +211,7 @@ int main(int argc, char** argv) {
 
     limpiar();
     fprintf(stdout, "\n\n\tSebastian Salazar Molina.\t @sebastian_sm \n");
+    pausa();
     return (EXIT_SUCCESS);
 }
 

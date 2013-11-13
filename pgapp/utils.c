@@ -18,7 +18,7 @@ void limpiar(void) {
 
 void pausa(void) {
     fprintf(stdout, "\nPresione enter para continuar...\n");
-    getchar();
+    getchar(); getchar();
 }
 #endif                          /* POSIX */
 
