@@ -22,6 +22,7 @@ extern "C" {
     double getDouble(char *texto);
     char* leer_string(char *label);
     long leer_long(char *label);
+    int leer_int(char *label);
 #ifdef	__cplusplus
 }
 #endif

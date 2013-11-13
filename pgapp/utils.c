@@ -67,3 +67,12 @@ long leer_long(char *label) {
 
     return resultado;
 }
+
+int leer_int(char *label) {
+    int resultado = 0;
+
+    fprintf(stdout, "\n\t%s", label);
+    scanf("%d", &resultado);
+
+    return resultado;
+}

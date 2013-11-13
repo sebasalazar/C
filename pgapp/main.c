@@ -23,8 +23,9 @@ int main(int argc, char** argv) {
     alumno_ramo *promedios = NULL;
     ranking_ramo *rkg_ramos = NULL;
     ranking_alumno *rkg_alumnos = NULL;
-    ranking_profesor *rkg_profesores = NULL;
     int opcion = 0;
+    int semestre = 0;
+    int anio = 0;
     long i = 0;
     long cant_ramos = 0;
     long docente_id = 0;
@@ -112,21 +113,72 @@ int main(int argc, char** argv) {
                 break;
 
             case 5:
+                estudiante_id = leer_long("\nIngrese el id de Estudiante: ");
+                promedios = consultar_notas_por_estudiante(estudiante_id, &cant_ramos);
+                if (promedios != NULL) {
+                    for (i = 0; i < cant_ramos; i++) {
+                        fprintf(stdout, "\nEstudiante id: %ld\t Asignatura: %s\t Nota: %lf", promedios[i].estudiante_id, promedios[i].asignatura, estudiante->promedio);
+                    }
+                    free(promedios);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
                 break;
 
             case 6:
+                estudiante_id = leer_long("\nIngrese el id de Estudiante: ");
+                promedios = consultar_asignatura_por_estudiante(estudiante_id, &cant_ramos);
+                if (promedios != NULL) {
+                    for (i = 0; i < cant_ramos; i++) {
+                        fprintf(stdout, "\nEstudiante id: %ld\t Asignatura: %s\t Promedio: %lf\t Desviacion Estandar: %lf", promedios[i].estudiante_id, promedios[i].asignatura, estudiante->promedio, estudiante->stddev);
+                    }
+                    free(promedios);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
                 break;
 
             case 7:
+                estudiante_id = leer_long("\nIngrese el id de Estudiante: ");
+                estudiante = consultar_estudiante(estudiante_id);
+                if (estudiante != NULL) {
+                    if (estudiante->promedio >= 1) {
+                        fprintf(stdout, "\nEstudiante id: %ld\t Promedio: %lf\t Mediana: %lf\t Desviacion Estandar: %lf", estudiante->estudiante_id, estudiante->promedio, estudiante->mediana, estudiante->stddev);
+                    } else {
+                        fprintf(stdout, "\Estudiante %ld no tiene ramos", estudiante_id);
+                    }
+                    free(docente);
+                } else {
+                    fprintf(stdout, "\nSin datos");
+                }
                 break;
 
             case 8:
+                semestre = leer_int("\nIngrese el numero de semestre: ");
+                anio = leer_int("\nIngrese el anio: ");
+                rkg_ramos = ranking_asignaturas(semestre, anio, &cant_ramos);
+                if (rkg_ramos) {
+                    for (i = 0; i < cant_ramos; i++) {
+                        fprintf(stdout, "\n Lugar: %ld\t Asignatura: %s\t Promedio: %lf\t Desviacion Estandar: %lf\t Semestre: %d\t Anio: %d", rkg_ramos[i].lugar, rkg_ramos[i].asignatura, rkg_ramos[i].nota, rkg_ramos[i].stddev, rkg_ramos[i].semestre, rkg_ramos[i].anio);
+                    }
+                    free(rkg_ramos);
+                }
                 break;
 
             case 9:
+                semestre = leer_int("\nIngrese el numero de semestre: ");
+                anio = leer_int("\nIngrese el anio: ");
+                rkg_alumnos = ranking_estudiantes(semestre, anio, &cant_ramos);
+                if (rkg_alumnos) {
+                    for (i = 0; i < cant_ramos; i++) {
+                        fprintf(stdout, "\n Lugar: %ld\t Estudiante id: %d\t Promedio: %lf\t Desviacion Estandar: %lf\t Semestre: %d\t Anio: %d", rkg_alumnos[i].lugar, rkg_alumnos[i].estudiante_id, rkg_alumnos[i].nota, rkg_alumnos[i].stddev, rkg_alumnos[i].semestre, rkg_alumnos[i].anio);
+                    }
+                    free(rkg_alumnos);
+                }
                 break;
 
             case 10:
+                prueba();
                 break;
 
             default:
