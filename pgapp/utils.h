@@ -16,6 +16,8 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
+    void limpiar(void);
+    void pausa(void);
     char* getString(char *texto);
     long getLong(char *texto);
     int getInt(char *texto);

@@ -1,5 +1,27 @@
 #include "utils.h"
 
+#ifdef __WIN32__
+
+void limpiar(void) {
+    system("cls");
+}
+
+void pausa(void) {
+    system("pause");
+}
+
+#else
+
+void limpiar(void) {
+    system("clear");
+}
+
+void pausa(void) {
+    fprintf(stdout, "\nPresione enter para continuar...\n");
+    getchar();
+}
+#endif                          /* POSIX */
+
 char* getString(char *texto) {
     char* resultado = NULL;
 

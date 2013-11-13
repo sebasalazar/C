@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
     char *cadena = NULL;
 
     do {
+        limpiar();
         fprintf(stdout, "\n\t OPCIONES");
         fprintf(stdout, "\n1)\t Obtener nota de aprobacion y reprobacion por asignatura");
         fprintf(stdout, "\n2)\t Obtener promedio y desviacion estandar por asignatura");
@@ -51,6 +52,7 @@ int main(int argc, char** argv) {
 
         switch (opcion) {
             case 1:
+                limpiar();
                 cadena = leer_string("\nIngrese la asignatura: ");
                 asignatura = consultar_asignatura(cadena);
                 if (asignatura != NULL) {
@@ -64,9 +66,11 @@ int main(int argc, char** argv) {
                     fprintf(stdout, "\nSin datos");
                 }
                 free(cadena);
+                pausa();
                 break;
 
             case 2:
+                limpiar();
                 cadena = leer_string("\nIngrese la asignatura: ");
                 asignatura = consultar_asignatura(cadena);
                 if (asignatura != NULL) {
@@ -80,9 +84,11 @@ int main(int argc, char** argv) {
                     fprintf(stdout, "\nSin datos");
                 }
                 free(cadena);
+                pausa();
                 break;
 
             case 3:
+                limpiar();
                 docente_id = leer_long("\nIngrese el id de Docente: ");
                 docente = consultar_docente(docente_id);
                 if (docente != NULL) {
@@ -95,9 +101,11 @@ int main(int argc, char** argv) {
                 } else {
                     fprintf(stdout, "\nSin datos");
                 }
+                pausa();
                 break;
 
             case 4:
+                limpiar();
                 docente_id = leer_long("\nIngrese el id de Docente: ");
                 docente = consultar_docente(docente_id);
                 if (docente != NULL) {
@@ -110,9 +118,11 @@ int main(int argc, char** argv) {
                 } else {
                     fprintf(stdout, "\nSin datos");
                 }
+                pausa();
                 break;
 
             case 5:
+                limpiar();
                 estudiante_id = leer_long("\nIngrese el id de Estudiante: ");
                 promedios = consultar_notas_por_estudiante(estudiante_id, &cant_ramos);
                 if (promedios != NULL) {
@@ -123,9 +133,11 @@ int main(int argc, char** argv) {
                 } else {
                     fprintf(stdout, "\nSin datos");
                 }
+                pausa();
                 break;
 
             case 6:
+                limpiar();
                 estudiante_id = leer_long("\nIngrese el id de Estudiante: ");
                 promedios = consultar_asignatura_por_estudiante(estudiante_id, &cant_ramos);
                 if (promedios != NULL) {
@@ -136,9 +148,11 @@ int main(int argc, char** argv) {
                 } else {
                     fprintf(stdout, "\nSin datos");
                 }
+                pausa();
                 break;
 
             case 7:
+                limpiar();
                 estudiante_id = leer_long("\nIngrese el id de Estudiante: ");
                 estudiante = consultar_estudiante(estudiante_id);
                 if (estudiante != NULL) {
@@ -151,9 +165,11 @@ int main(int argc, char** argv) {
                 } else {
                     fprintf(stdout, "\nSin datos");
                 }
+                pausa();
                 break;
 
             case 8:
+                limpiar();
                 semestre = leer_int("\nIngrese el numero de semestre: ");
                 anio = leer_int("\nIngrese el anio: ");
                 rkg_ramos = ranking_asignaturas(semestre, anio, &cant_ramos);
@@ -163,9 +179,11 @@ int main(int argc, char** argv) {
                     }
                     free(rkg_ramos);
                 }
+                pausa();
                 break;
 
             case 9:
+                limpiar();
                 semestre = leer_int("\nIngrese el numero de semestre: ");
                 anio = leer_int("\nIngrese el anio: ");
                 rkg_alumnos = ranking_estudiantes(semestre, anio, &cant_ramos);
@@ -175,10 +193,13 @@ int main(int argc, char** argv) {
                     }
                     free(rkg_alumnos);
                 }
+                pausa();
                 break;
 
             case 10:
+                limpiar();
                 prueba();
+                pausa();
                 break;
 
             default:
@@ -188,8 +209,8 @@ int main(int argc, char** argv) {
 
     } while (opcion != 0);
 
-    fprintf(stdout, "\n\n\tFin del programa\t -\t Sebastian Salazar Molina.\t @sebastian_sm\n");
-
+    limpiar();
+    fprintf(stdout, "\n\n\tSebastian Salazar Molina.\t @sebastian_sm \n");
     return (EXIT_SUCCESS);
 }
 
@@ -206,18 +227,18 @@ void prueba() {
 
     asignatura = consultar_asignatura("CALCULO I");
     if (asignatura != NULL) {
-        fprintf(stdout, "\nAsignatura: %s Aprobacion: %lf Reprobacion: %lf Promedio: %lf Desviacion Estandar: %lf\n", asignatura->asignatura, asignatura->aprobacion, asignatura->reprobacion, asignatura->promedio, asignatura->stddev);
+        fprintf(stdout, "\nAsignatura: %s Aprobacion: %lf Reprobacion: %lf Promedio: %lf Desviacion Estandar: %lf", asignatura->asignatura, asignatura->aprobacion, asignatura->reprobacion, asignatura->promedio, asignatura->stddev);
     }
 
     docente = consultar_docente(21);
     if (docente != NULL) {
-        fprintf(stdout, "\nDocente id: %ld Aprobacion: %lf Reprobacion: %lf Promedio: %lf Desviacion Estandar: %lf\n", docente->docente_id, docente->aprobacion, docente->reprobacion, docente->promedio, docente->stddev);
+        fprintf(stdout, "\nDocente id: %ld Aprobacion: %lf Reprobacion: %lf Promedio: %lf Desviacion Estandar: %lf", docente->docente_id, docente->aprobacion, docente->reprobacion, docente->promedio, docente->stddev);
         free(docente);
     }
 
     estudiante = consultar_estudiante(1221);
     if (estudiante != NULL) {
-        fprintf(stdout, "\nEstudiante id: %ld Aprobacion: %lf Reprobacion: %lf Promedio: %lf Mediana: %lf Desviacion Estandar: %lf\n", estudiante->estudiante_id, estudiante->aprobacion, estudiante->reprobacion, estudiante->promedio, estudiante->mediana, estudiante->stddev);
+        fprintf(stdout, "\nEstudiante id: %ld Aprobacion: %lf Reprobacion: %lf Promedio: %lf Mediana: %lf Desviacion Estandar: %lf", estudiante->estudiante_id, estudiante->aprobacion, estudiante->reprobacion, estudiante->promedio, estudiante->mediana, estudiante->stddev);
         free(estudiante);
     }
 
