@@ -7,6 +7,7 @@ void limpiar(void) {
 }
 
 void pausa(void) {
+    fprintf(stdout, "\n");
     system("pause");
 }
 
