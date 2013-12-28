@@ -1,6 +1,6 @@
 #include "utils.h"
 
-int printTime(void) {
+int print_time(void) {
     struct timeval tv;
     struct timezone tz;
     time_t t;
@@ -15,3 +15,61 @@ int printTime(void) {
     return (t);
 }
 
+char* str_now() {
+    char* date_str = NULL;
+    char text[128];
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+
+    memset(text, 0, sizeof (text));
+    strftime(text, sizeof (text) - 1, "%Y-%m-%d %H:%M:%S", t);
+
+    date_str = (char *) calloc(strlen(text) + 1, sizeof (char));
+    sprintf(date_str, "%s", text);
+
+    return date_str;
+}
+
+unsigned char* get_data(char* data_file) {
+    byte *buffer;
+    FILE *pf;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    if ((pf = fopen(data_file, "r")) == NULL) {
+        perror("error en archivo");
+        return NULL;
+    }
+
+    while ((read = getline(&line, &len, pf)) != -1) {
+        buffer = (byte *) calloc(len / 3 + 3, sizeof (char));
+        int nbyte = 0;
+        int i;
+        for (i = 0; i < strlen(line); i += 3) {
+            if (line[i] == '\n') break;
+            byte c = (isdigit(line[i + 1]) ? line[i + 1] - '0' : line[i + 1] - 'A' + 10)*16 + (isdigit(line[i + 2]) ? line[i + 2] - '0' : line[i + 2] - 'A' + 10);
+            buffer[nbyte++] = c;
+        }
+    }
+    fclose(pf);
+    return buffer;
+}
+
+char* hex2str(byte* hex, unsigned int len) {
+    int i;
+    unsigned long largo = len * 2;
+    char *app;
+    char *buf;
+    app = (char *) malloc(sizeof (char *));
+    buf = (char *) malloc((largo + 1) * sizeof (char *));
+    strcpy(buf, "");
+    for (i = 0; i < largo; i++) {
+        sprintf(app, "%02x", (byte) hex[i]);
+        strcat(buf, app);
+    }
+    buf[largo] = '\0';
+
+    return buf;
+
+}

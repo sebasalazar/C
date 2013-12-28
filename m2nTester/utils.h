@@ -16,12 +16,17 @@ extern "C" {
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
-
+#include <string.h>
+#include <ctype.h>
 
 #define PANIC( a ) { fprintf(stderr,"%s", a ); }
 
-    int printTime(void);
+    typedef unsigned char byte;
 
+    int print_time(void);
+    char* str_now();
+    unsigned char* get_data(char* data_file);
+    char* hex2str(byte* hex, unsigned int len);
 
 #ifdef	__cplusplus
 }
