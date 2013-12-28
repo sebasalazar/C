@@ -24,14 +24,9 @@ extern "C" {
 #define ERROR_LOG 1
 #define DEBUG_LOG 2
 
-    /* The key used to associate a log file pointer with each thread.
-     */
-    static pthread_key_t logger_key;
+    static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-    void initialize_log();
-    void write_log(const char* message);
-    void close_log(void* thread_log);
-    void logger(int level, char* message);
+    void logger(FILE* archivo, int nivel, char* mensaje);
 
 #ifdef	__cplusplus
 }
