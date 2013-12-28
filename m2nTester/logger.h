@@ -19,7 +19,7 @@ extern "C" {
 #include <string.h>
 
 #include "utils.h"
-    
+
 #define INFO_LOG 0
 #define ERROR_LOG 1
 #define DEBUG_LOG 2

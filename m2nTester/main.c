@@ -27,8 +27,8 @@ void *procesar(void* args);
  * 
  */
 int main(int argc, char** argv) {
-    unsigned long u = 0;
-    unsigned long usuarios = 0;
+    long u = 0;
+    long usuarios = 0;
     struct arg_struct argumentos;
     int tout = 5;
 
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    printf("File Send = %s\nFile Recv  = %s\nIP     = %s\nPort     = %s\n", argv[1], argv[2], argv[3], argv[4]);
+    printf("File Send = %s\nFile Recv  = %s\nIP     = %s\nPort     = %s\n", argv[2], argv[3], argv[4], argv[5]);
     printf("argc = %d\n", argc);
     if (argc == 7) {
         tout = atoi(argv[6]);
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     printf("time out %d seg\n", tout);
 
 
-    usuarios = atoi(argv[1]);
+    usuarios = (long) atol(argv[1]);
     pthread_t hilos[usuarios];
 
     argumentos.datos = get_data(argv[2]);
