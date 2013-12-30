@@ -138,8 +138,8 @@ void *procesar(void *arguments) {
             sprintf(mensaje, "Recibido %d bytes  %s", n, salida);
             logger(args->log, DEBUG_LOG, mensaje);
         }
-        close(sockfd);
     }
+    close(sockfd);
     return NULL;
 }
 
