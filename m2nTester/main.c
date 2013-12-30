@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 
 #include "logger.h"
@@ -89,6 +90,49 @@ int main(int argc, char** argv) {
 }
 
 void *procesar(void *arguments) {
+    struct arg_struct *args = arguments;
+    int sockfd, n;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+    byte respuesta[512];
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        logger(args->log, ERROR_LOG, "ERROR abriendo socket\n");
+        return NULL;
+    }
+
+    server = gethostbyname(args->ip);
+    if (server == NULL) {
+        logger(args->log, ERROR_LOG, "ERROR, no hay servidor\n");
+        return NULL;
+    }
+
+    bzero((char *) &serv_addr, sizeof (serv_addr));
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
+    serv_addr.sin_port = htons(args->puerto);
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
+        logger(args->log, ERROR_LOG, "ERROR al conectar");
+    } else {
+        n = write(sockfd, args->datos, sizeof (args->datos));
+        if (n < 0) {
+            logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
+        }
+
+        n = read(sockfd, respuesta, 512);
+        if (n < 0) {
+            logger(args->log, ERROR_LOG, "ERROR reading from socket");
+        }
+        char* salida = hex2str(respuesta, n);
+        logger(args->log, DEBUG_LOG, salida);
+        close(sockfd);
+    }
+    return NULL;
+}
+
+/*
+void *procesar(void *arguments) {
     struct sockaddr_in servidor;
     struct arg_struct *args = arguments;
     byte *respuesta;
@@ -101,7 +145,7 @@ void *procesar(void *arguments) {
 
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
 
-    if (connect(fd, (struct sockaddr *) &servidor, sizeof (servidor))) {
+    if (connect(fd, (struct sockaddr *) &servidor, sizeof (servidor)) != -1) {
         int largo = (sizeof (args->datos) + 1);
         respuesta = (byte *) malloc(sizeof (byte) * largo);
         memset(respuesta, 0, largo);
@@ -118,3 +162,4 @@ void *procesar(void *arguments) {
 
     return NULL;
 }
+ */
