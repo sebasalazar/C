@@ -21,6 +21,7 @@
 struct arg_struct {
     FILE *log;
     byte* datos;
+    int largo_datos;
     char* archivo_salida;
     char* ip;
     int puerto;
@@ -37,6 +38,7 @@ int main(int argc, char** argv) {
     long usuarios = 0;
     struct arg_struct argumentos;
     int tout = 5;
+    int largo = 0;
     FILE *archivo = fopen("m2nTester.log", "a+");
 
     if (archivo == NULL) {
@@ -65,6 +67,7 @@ int main(int argc, char** argv) {
 
     argumentos.log = archivo;
     argumentos.datos = get_data(argv[2]);
+    argumentos.largo_datos = 217;
     argumentos.ip = (char *) calloc(strlen(argv[4]) + 1, sizeof (char));
     sprintf(argumentos.ip, "%s", argv[4]);
     argumentos.puerto = atoi(argv[5]);
@@ -95,6 +98,7 @@ void *procesar(void *arguments) {
     struct sockaddr_in serv_addr;
     struct hostent *server;
     byte respuesta[512];
+    char mensaje[512];
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
@@ -115,17 +119,25 @@ void *procesar(void *arguments) {
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
         logger(args->log, ERROR_LOG, "ERROR al conectar");
     } else {
-        n = write(sockfd, args->datos, sizeof (args->datos));
+        n = send(sockfd, args->datos, args->largo_datos + 2, 0);
         if (n < 0) {
             logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
+        } else {
+            char* enviado = hex2str(args->datos, n);
+            memset(mensaje, 0, 512);
+            sprintf(mensaje, "Enviado %d bytes %s", n, enviado);
+            logger(args->log, DEBUG_LOG, mensaje);
         }
 
-        n = read(sockfd, respuesta, 512);
+        n = read(sockfd, respuesta, n);
         if (n < 0) {
             logger(args->log, ERROR_LOG, "ERROR reading from socket");
+        } else {
+            char* salida = hex2str(respuesta, n);
+            memset(mensaje, 0, 512);
+            sprintf(mensaje, "Recibido %d bytes  %s", n, salida);
+            logger(args->log, DEBUG_LOG, mensaje);
         }
-        char* salida = hex2str(respuesta, n);
-        logger(args->log, DEBUG_LOG, salida);
         close(sockfd);
     }
     return NULL;

@@ -30,18 +30,20 @@ char* str_now() {
     return date_str;
 }
 
-unsigned char* get_data(char* data_file) {
+byte* get_data(char* data_file) {
     byte *buffer;
     FILE *pf;
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
+    char strtmp[16];
 
     if ((pf = fopen(data_file, "r")) == NULL) {
         perror("error en archivo");
         return NULL;
     }
 
+    /*
     while ((read = getline(&line, &len, pf)) != -1) {
         buffer = (byte *) calloc(len / 3 + 3, sizeof (char));
         int nbyte = 0;
@@ -52,6 +54,26 @@ unsigned char* get_data(char* data_file) {
             buffer[nbyte++] = c;
         }
     }
+     */
+
+    while ((read = getline(&line, &len, pf)) != -1) {
+        buffer = (byte *) calloc(len / 3 + 3, sizeof (char));
+        int nbyte = 0;
+        int i;
+        for (i = 0; i < strlen(line); i += 3) {
+            if (line[i] == '\n') break;
+            byte c = (isdigit(line[i + 1]) ? line[i + 1] - '0' : line[i + 1] - 'A' + 10)*16 + \
+ (isdigit(line[i + 2]) ? line[i + 2] - '0' : line[i + 2] - 'A' + 10);
+            buffer[2 + nbyte++] = c;
+        }
+        // sprintf(strtmp, "%.4d", nbyte);
+        // fprintf(stderr, "enviando %s bytes\n", strtmp);
+        // buffer[0] = ((strtmp[0] - '0') << 4) + ((strtmp[1] - '0') & 0x0F);
+        // buffer[1] = ((strtmp[2] - '0') << 4) + ((strtmp[3] - '0') & 0x0F);
+        buffer[0] = 0x02;
+        buffer[1] = 17;
+    }
+
     fclose(pf);
     return buffer;
 }

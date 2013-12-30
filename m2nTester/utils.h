@@ -25,7 +25,7 @@ extern "C" {
 
     int print_time(void);
     char* str_now();
-    unsigned char* get_data(char* data_file);
+    byte* get_data(char* data_file);
     char* hex2str(byte* hex, unsigned int len);
 
 #ifdef	__cplusplus
