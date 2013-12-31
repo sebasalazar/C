@@ -27,10 +27,10 @@ extern "C" {
     char* str_now();
     byte* get_data(char* data_file);
     char* hex2str(byte* hex, unsigned int len);
+    byte* static_data();
 
 #ifdef	__cplusplus
 }
 #endif
 
 #endif	/* UTILS_H */
-

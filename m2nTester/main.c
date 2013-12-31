@@ -26,6 +26,7 @@ struct arg_struct {
     char* ip;
     int puerto;
     int timeout;
+    int repeticiones;
 };
 
 void *procesar(void* args);
@@ -38,7 +39,6 @@ int main(int argc, char** argv) {
     long usuarios = 0;
     struct arg_struct argumentos;
     int tout = 5;
-    int largo = 0;
     FILE *archivo = fopen("m2nTester.log", "a+");
 
     if (archivo == NULL) {
@@ -47,17 +47,17 @@ int main(int argc, char** argv) {
     }
 
     if (argc < 5) {
-        printf("ERROR\nuse: %s USUARIOS_CONCURRENTES FILE_SEND FILE_RECV IP PORT\n", argv[0]);
+        printf("ERROR\nuse: %s USUARIOS_CONCURRENTES REPETICIONES IP PORT\n", argv[0]);
         logger(archivo, DEBUG_LOG, "Error de uso");
         exit(1);
     }
 
 
 
-    printf("File Send = %s\nFile Recv  = %s\nIP     = %s\nPort     = %s\n", argv[2], argv[3], argv[4], argv[5]);
+    printf("IP     = %s\nPort     = %s\n", argv[3], argv[4]);
     printf("argc = %d\n", argc);
-    if (argc == 7) {
-        tout = atoi(argv[6]);
+    if (argc == 6) {
+        tout = atoi(argv[5]);
     }
     printf("time out %d seg\n", tout);
 
@@ -66,12 +66,14 @@ int main(int argc, char** argv) {
     pthread_t hilos[usuarios];
 
     argumentos.log = archivo;
-    argumentos.datos = get_data(argv[2]);
+    argumentos.datos = static_data();
     argumentos.largo_datos = 217;
-    argumentos.ip = (char *) calloc(strlen(argv[4]) + 1, sizeof (char));
-    sprintf(argumentos.ip, "%s", argv[4]);
-    argumentos.puerto = atoi(argv[5]);
+    argumentos.ip = (char *) calloc(strlen(argv[3]) + 1, sizeof (char));
+    sprintf(argumentos.ip, "%s", argv[3]);
+    printf("%s \n", argumentos.ip);
+    argumentos.puerto = atoi(argv[4]);
     argumentos.timeout = tout;
+    argumentos.repeticiones = atoi(argv[2]);
 
     for (u = 0; u < usuarios; u++) {
         logger(archivo, INFO_LOG, "Creando hilo");
@@ -94,17 +96,11 @@ int main(int argc, char** argv) {
 
 void *procesar(void *arguments) {
     struct arg_struct *args = arguments;
-    int sockfd, n;
+    int sockfd, n, i;
     struct sockaddr_in serv_addr;
     struct hostent *server;
     byte respuesta[512];
     char mensaje[512];
-
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        logger(args->log, ERROR_LOG, "ERROR abriendo socket\n");
-        return NULL;
-    }
 
     server = gethostbyname(args->ip);
     if (server == NULL) {
@@ -116,30 +112,39 @@ void *procesar(void *arguments) {
     serv_addr.sin_family = AF_INET;
     bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
     serv_addr.sin_port = htons(args->puerto);
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
-        logger(args->log, ERROR_LOG, "ERROR al conectar");
-    } else {
-        n = send(sockfd, args->datos, args->largo_datos + 2, 0);
-        if (n < 0) {
-            logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
-        } else {
-            char* enviado = hex2str(args->datos, n);
-            memset(mensaje, 0, 512);
-            sprintf(mensaje, "Enviado %d bytes %s", n, enviado);
-            logger(args->log, DEBUG_LOG, mensaje);
+
+    for (i = 0; i < (args->repeticiones); i++) {
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd < 0) {
+            logger(args->log, ERROR_LOG, "ERROR abriendo socket\n");
+            return NULL;
         }
 
-        n = read(sockfd, respuesta, n);
-        if (n < 0) {
-            logger(args->log, ERROR_LOG, "ERROR reading from socket");
+        if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
+            logger(args->log, ERROR_LOG, "ERROR al conectar");
         } else {
-            char* salida = hex2str(respuesta, n);
-            memset(mensaje, 0, 512);
-            sprintf(mensaje, "Recibido %d bytes  %s", n, salida);
-            logger(args->log, DEBUG_LOG, mensaje);
+            n = send(sockfd, args->datos, args->largo_datos + 2, 0);
+            if (n < 0) {
+                logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
+            } else {
+                char* enviado = hex2str(args->datos, n);
+                memset(mensaje, 0, 512);
+                sprintf(mensaje, "Enviado %d bytes %s", n, enviado);
+                logger(args->log, DEBUG_LOG, mensaje);
+            }
+
+            n = read(sockfd, respuesta, n);
+            if (n < 0) {
+                logger(args->log, ERROR_LOG, "ERROR reading from socket");
+            } else {
+                char* salida = hex2str(respuesta, n);
+                memset(mensaje, 0, 512);
+                sprintf(mensaje, "Recibido %d bytes  %s", n, salida);
+                logger(args->log, DEBUG_LOG, mensaje);
+            }
         }
+        close(sockfd);
     }
-    close(sockfd);
     return NULL;
 }
 
