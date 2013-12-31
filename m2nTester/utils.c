@@ -83,10 +83,9 @@ char* hex2str(byte* hex, unsigned int len) {
     unsigned long largo = len * 2;
     char *app;
     char *buf;
-    app = (char *) malloc(sizeof (char *));
-    buf = (char *) malloc((largo + 1) * sizeof (char *));
-    strcpy(buf, "");
-    for (i = 0; i < largo; i++) {
+    app = (char *) calloc(4, sizeof (char));
+    buf = (char *) calloc((largo + 1), sizeof (char));
+    for (i = 0; i < len; i++) {
         sprintf(app, "%02x", (byte) hex[i]);
         strcat(buf, app);
     }

@@ -23,7 +23,6 @@ OBJECTDIR=${CND_BUILDDIR}
 OBJECTFILES= \
 	${OBJECTDIR}/utils.o \
 	${OBJECTDIR}/logger.o \
-	${OBJECTDIR}/socket.o \
 	${OBJECTDIR}/main.o
 
 
@@ -71,11 +70,6 @@ ${OBJECTDIR}/utils.o: utils.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/utils.o utils.c
-
-${OBJECTDIR}/socket.o: socket.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/socket.o socket.c
 
 # Clean Targets
 clean: ${CLEAN_SUBPROJECTS}

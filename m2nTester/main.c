@@ -16,17 +16,15 @@
 
 #include "logger.h"
 #include "utils.h"
-#include "socket.h"
 
 struct arg_struct {
     FILE *log;
     byte* datos;
     int largo_datos;
     char* archivo_salida;
-    char* ip;
-    int puerto;
     int timeout;
     int repeticiones;
+    struct sockaddr_in servidor;
 };
 
 void *procesar(void* args);
@@ -39,6 +37,9 @@ int main(int argc, char** argv) {
     long usuarios = 0;
     struct arg_struct argumentos;
     int tout = 5;
+    char* ip;
+    int puerto;
+
     FILE *archivo = fopen("m2nTester.log", "a+");
 
     if (archivo == NULL) {
@@ -65,15 +66,21 @@ int main(int argc, char** argv) {
     usuarios = (long) atol(argv[1]);
     pthread_t hilos[usuarios];
 
+    ip = (char *) calloc(strlen(argv[3]) + 1, sizeof (char));
+    sprintf(ip, "%s", argv[3]);
+    puerto = atoi(argv[4]);
+
+    struct hostent* hostname = gethostbyname(ip);
+    argumentos.servidor.sin_family = AF_INET;
+    argumentos.servidor.sin_port = htons(puerto);
+    bcopy((char *) hostname->h_addr, (char *) &(argumentos.servidor.sin_addr.s_addr), hostname->h_length);
+
     argumentos.log = archivo;
     argumentos.datos = static_data();
     argumentos.largo_datos = 217;
-    argumentos.ip = (char *) calloc(strlen(argv[3]) + 1, sizeof (char));
-    sprintf(argumentos.ip, "%s", argv[3]);
-    printf("%s \n", argumentos.ip);
-    argumentos.puerto = atoi(argv[4]);
     argumentos.timeout = tout;
     argumentos.repeticiones = atoi(argv[2]);
+
 
     for (u = 0; u < usuarios; u++) {
         logger(archivo, INFO_LOG, "Creando hilo");
@@ -97,21 +104,9 @@ int main(int argc, char** argv) {
 void *procesar(void *arguments) {
     struct arg_struct *args = arguments;
     int sockfd, n, i;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
+
     byte respuesta[512];
     char mensaje[512];
-
-    server = gethostbyname(args->ip);
-    if (server == NULL) {
-        logger(args->log, ERROR_LOG, "ERROR, no hay servidor\n");
-        return NULL;
-    }
-
-    bzero((char *) &serv_addr, sizeof (serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
-    serv_addr.sin_port = htons(args->puerto);
 
     for (i = 0; i < (args->repeticiones); i++) {
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -120,7 +115,7 @@ void *procesar(void *arguments) {
             return NULL;
         }
 
-        if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
+        if (connect(sockfd, (struct sockaddr *) &(args->servidor), sizeof (args->servidor)) < 0) {
             logger(args->log, ERROR_LOG, "ERROR al conectar");
         } else {
             n = send(sockfd, args->datos, args->largo_datos + 2, 0);
@@ -139,7 +134,7 @@ void *procesar(void *arguments) {
             } else {
                 char* salida = hex2str(respuesta, n);
                 memset(mensaje, 0, 512);
-                sprintf(mensaje, "Recibido %d bytes  %s", n, salida);
+                sprintf(mensaje, "Recibido %d bytes %s", n, salida);
                 logger(args->log, DEBUG_LOG, mensaje);
             }
         }
