@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #include "logger.h"
 #include "utils.h"
@@ -69,7 +70,7 @@ int main(int argc, char** argv) {
     ip = (char *) calloc(strlen(argv[3]) + 1, sizeof (char));
     sprintf(ip, "%s", argv[3]);
     puerto = atoi(argv[4]);
-    
+
     repeticiones = atoi(argv[2]);
     if (repeticiones > 255) {
         repeticiones = 256;
@@ -126,23 +127,23 @@ void *procesar(void *arguments) {
             logger(args->log, ERROR_LOG, "ERROR al conectar");
         } else {
             datos_enviados = send(sockfd, args->datos, args->largo_datos + 2, 0);
-            if (datos_enviados < 0) {
+            if (datos_enviados <= 0) {
                 logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
             } else {
-                //                char* enviado = hex2str(args->datos, n);
-                //                memset(mensaje, 0, 512);
-                sprintf(mensaje, "Enviado %ld bytes", datos_enviados);
+                char* enviado = hex2str(args->datos, datos_enviados);
+                memset(mensaje, 0, 512);
+                sprintf(mensaje, "Enviado %ld bytes %s", datos_enviados, enviado);
                 logger(args->log, DEBUG_LOG, mensaje);
-            }
 
-            datos_recibidos = read(sockfd, respuesta, datos_enviados);
-            if (datos_recibidos < 0) {
-                logger(args->log, ERROR_LOG, "ERROR leyendo del socket");
-            } else {
-                //                char* salida = hex2str(respuesta, n);
-                //                memset(mensaje, 0, 512);
-                sprintf(mensaje, "Recibido %ld bytes", datos_recibidos);
-                logger(args->log, DEBUG_LOG, mensaje);
+                datos_recibidos = read(sockfd, respuesta, datos_enviados);
+                if (datos_recibidos < 0) {
+                    logger(args->log, ERROR_LOG, "ERROR leyendo del socket");
+                } else {
+                    char* salida = hex2str(respuesta, datos_recibidos + 1);
+                    memset(mensaje, 0, 512);
+                    sprintf(mensaje, "Recibido %ld bytes %s", datos_recibidos, salida);
+                    logger(args->log, DEBUG_LOG, mensaje);
+                }
             }
         }
         close(sockfd);
