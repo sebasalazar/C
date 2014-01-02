@@ -25,8 +25,9 @@ char* str_now() {
     strftime(text, sizeof (text) - 1, "%Y-%m-%d %H:%M:%S", t);
 
     date_str = (char *) calloc(strlen(text) + 1, sizeof (char));
-    sprintf(date_str, "%s", text);
-
+    if (date_str != NULL) {
+        sprintf(date_str, "%s", text);
+    }
     return date_str;
 }
 
@@ -78,6 +79,7 @@ byte* get_data(char* data_file) {
     return buffer;
 }
 
+/*
 char* hex2str(byte* hex, unsigned int len) {
     int i;
     unsigned long largo = len * 2;
@@ -93,6 +95,28 @@ char* hex2str(byte* hex, unsigned int len) {
 
     return buf;
 
+}
+ */
+
+char *hex2str(byte *hex, int len) {
+    char *str = NULL;
+    int str_len = 0, i = 0;
+    char tmp_str[3] = {0};
+
+    str_len = (len * 2);
+
+    str = (char *) calloc(str_len + 1, sizeof (char));
+    if (str != NULL) {
+        memset(str, 0, (str_len + 1));
+
+        for (i = 0; i < len; i++) {
+            memset((char *) &tmp_str, 0, sizeof (tmp_str));
+            snprintf((char *) &tmp_str, sizeof (tmp_str), "%.2X", hex[i]);
+            strncat(str, (char *) &tmp_str, 2);
+        }
+    }
+
+    return str;
 }
 
 byte* static_data() {

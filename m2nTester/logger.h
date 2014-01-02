@@ -24,8 +24,6 @@ extern "C" {
 #define ERROR_LOG 1
 #define DEBUG_LOG 2
 
-    static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
     void logger(FILE* archivo, int nivel, char* mensaje);
 
 #ifdef	__cplusplus

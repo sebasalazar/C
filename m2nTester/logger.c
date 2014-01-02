@@ -1,8 +1,6 @@
 #include "logger.h"
 
 void logger(FILE* archivo, int nivel, char* mensaje) {
-    pthread_mutex_lock(&mutex);
-
     if (archivo != NULL) {
         char texto[1024];
         char nivel_str[20];
@@ -20,5 +18,4 @@ void logger(FILE* archivo, int nivel, char* mensaje) {
 
         fprintf(archivo, "%s\n", texto);
     }
-    pthread_mutex_unlock(&mutex);
 }
