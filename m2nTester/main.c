@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
         logger(archivo, INFO_LOG, "Creando hilo");
         if (pthread_create(&hilos[u], NULL, &procesar, (void *) &argumentos) != 0) {
             logger(archivo, ERROR_LOG, "Error al crear hilo");
-            return -1;
+            // return -1;
         }
     }
 
@@ -112,41 +112,60 @@ void *procesar(void *arguments) {
     int sockfd, i;
     long datos_enviados;
     long datos_recibidos;
+    struct timespec inicio, fin;
+    double elapsed;
+    int ok = 0;
+    FILE* csv;
 
     byte respuesta[512];
     char mensaje[512];
 
     for (i = 0; i < (args->repeticiones); i++) {
+        ok = 0;
+        clock_gettime(CLOCK_MONOTONIC, &inicio);
+
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
             logger(args->log, ERROR_LOG, "ERROR abriendo socket\n");
-            return NULL;
-        }
-
-        if (connect(sockfd, (struct sockaddr *) &(args->servidor), sizeof (args->servidor)) < 0) {
-            logger(args->log, ERROR_LOG, "ERROR al conectar");
         } else {
-            datos_enviados = send(sockfd, args->datos, args->largo_datos + 2, 0);
-            if (datos_enviados <= 0) {
-                logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
-            } else {
-                char* enviado = hex2str(args->datos, datos_enviados);
-                memset(mensaje, 0, 512);
-                sprintf(mensaje, "Enviado %ld bytes %s", datos_enviados, enviado);
-                logger(args->log, DEBUG_LOG, mensaje);
 
-                datos_recibidos = read(sockfd, respuesta, datos_enviados);
-                if (datos_recibidos < 0) {
-                    logger(args->log, ERROR_LOG, "ERROR leyendo del socket");
+            if (connect(sockfd, (struct sockaddr *) &(args->servidor), sizeof (args->servidor)) < 0) {
+                logger(args->log, ERROR_LOG, "ERROR al conectar");
+            } else {
+                datos_enviados = send(sockfd, args->datos, args->largo_datos + 2, 0);
+                if (datos_enviados <= 0) {
+                    logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
                 } else {
-                    char* salida = hex2str(respuesta, datos_recibidos + 1);
+                    char* enviado = hex2str(args->datos, datos_enviados);
                     memset(mensaje, 0, 512);
-                    sprintf(mensaje, "Recibido %ld bytes %s", datos_recibidos, salida);
+                    sprintf(mensaje, "Enviado %ld bytes %s", datos_enviados, enviado);
                     logger(args->log, DEBUG_LOG, mensaje);
+
+                    datos_recibidos = read(sockfd, respuesta, datos_enviados);
+                    if (datos_recibidos < 0) {
+                        logger(args->log, ERROR_LOG, "ERROR leyendo del socket");
+                    } else {
+                        char* salida = hex2str(respuesta, datos_recibidos + 1);
+                        memset(mensaje, 0, 512);
+                        sprintf(mensaje, "Recibido %ld bytes %s", datos_recibidos, salida);
+                        logger(args->log, DEBUG_LOG, mensaje);
+                        ok = 1;
+                    }
                 }
             }
+
+            close(sockfd);
         }
-        close(sockfd);
+
+        clock_gettime(CLOCK_MONOTONIC, &fin);
+        elapsed = fin.tv_sec - inicio.tv_sec;
+        elapsed += (fin.tv_nsec - inicio.tv_nsec) / 1000000000.0;
+
+        csv = fopen("resultado.csv", "a+");
+        if (csv != NULL) {
+            fprintf(csv, "%s;%d;%lf\n", str_now(), ok, elapsed);
+            fclose(csv);
+        }
     }
     return NULL;
 }

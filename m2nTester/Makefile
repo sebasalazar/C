@@ -43,7 +43,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-pthread
+LDLIBSOPTIONS=-pthread -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -76,6 +76,7 @@ clean: ${CLEAN_SUBPROJECTS}
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr ${CND_DISTDIR}
 	${RM} -fr *.log
+	${RM} -fr *.csv
 	${RM} -fr core
 
 # Subprojects
