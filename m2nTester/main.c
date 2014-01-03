@@ -110,10 +110,10 @@ int main(int argc, char** argv) {
 void *procesar(void *arguments) {
     struct arg_struct *args = arguments;
     int sockfd, i;
-    long datos_enviados;
-    long datos_recibidos;
+    long datos_enviados = 0;
+    long datos_recibidos = 0;
     struct timespec inicio, fin;
-    double elapsed;
+    double transcurrido;
     int ok = 0;
     FILE* csv;
 
@@ -121,6 +121,8 @@ void *procesar(void *arguments) {
     char mensaje[512];
 
     for (i = 0; i < (args->repeticiones); i++) {
+        datos_enviados = 0;
+        datos_recibidos = 0;
         ok = 0;
         clock_gettime(CLOCK_MONOTONIC, &inicio);
 
@@ -142,7 +144,7 @@ void *procesar(void *arguments) {
                     logger(args->log, DEBUG_LOG, mensaje);
 
                     datos_recibidos = read(sockfd, respuesta, datos_enviados);
-                    if (datos_recibidos < 0) {
+                    if (datos_recibidos <= 0) {
                         logger(args->log, ERROR_LOG, "ERROR leyendo del socket");
                     } else {
                         char* salida = hex2str(respuesta, datos_recibidos + 1);
@@ -158,12 +160,12 @@ void *procesar(void *arguments) {
         }
 
         clock_gettime(CLOCK_MONOTONIC, &fin);
-        elapsed = fin.tv_sec - inicio.tv_sec;
-        elapsed += (fin.tv_nsec - inicio.tv_nsec) / 1000000000.0;
+        transcurrido = fin.tv_sec - inicio.tv_sec;
+        transcurrido += (fin.tv_nsec - inicio.tv_nsec) / 1000000000.0;
 
         csv = fopen("resultado.csv", "a+");
         if (csv != NULL) {
-            fprintf(csv, "%s;%d;%lf\n", str_now(), ok, elapsed);
+            fprintf(csv, "%s;%ld;%ld,%d;%lf\n", str_now(), datos_enviados, datos_recibidos, ok, transcurrido);
             fclose(csv);
         }
     }
