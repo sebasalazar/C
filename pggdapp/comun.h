@@ -1,8 +1,7 @@
 /* 
  * File:   comun.h
- * Author: Sebastián Salazar Molina <ssalazar@experti.cl>
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
  *
- * Created on April 29, 2014, 12:32 PM
  */
 
 #ifndef COMUN_H
@@ -21,7 +20,7 @@ extern "C" {
 #define IMG_WIDTH 800
 #define IMG_HEIGHT 600
 #define IMG_BPP 24
-    
+
 #define BORDE_ANCHO 70
 #define BORDE_ALTO 50
 

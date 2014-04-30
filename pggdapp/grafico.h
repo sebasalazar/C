@@ -1,8 +1,7 @@
-/* 
+/** 
  * File:   grafico.h
- * Author: Sebastián Salazar Molina <ssalazar@experti.cl>
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
  *
- * Created on April 28, 2014, 7:52 PM
  */
 
 #ifndef GRAFICO_H

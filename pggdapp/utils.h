@@ -1,8 +1,7 @@
 /* 
  * File:   utils.h
- * Author: seba
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
  *
- * Created on November 12, 2013, 4:22 PM
  */
 
 #ifndef UTILS_H

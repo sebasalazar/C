@@ -1,8 +1,7 @@
-/* 
+/** 
  * File:   db.h
- * Author: Sebastián Salazar Molina.
+ * Author: Sebastián Salazar Molina. <sebasalazar@gmail.com>
  *
- * Created on November 11, 2013, 6:54 PM
  */
 
 #ifndef DB_H

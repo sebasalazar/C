@@ -1,3 +1,9 @@
+/* 
+ * File:   utils.c
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
+ *
+ */
+
 #include "utils.h"
 
 #ifdef __WIN32__

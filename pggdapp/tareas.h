@@ -1,8 +1,7 @@
 /* 
  * File:   tareas.h
- * Author: seba
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
  *
- * Created on 11 de noviembre de 2013, 11:20 PM
  */
 
 #ifndef TAREAS_H
@@ -17,6 +16,7 @@ extern "C" {
 #include <string.h>
 #include "comun.h"
 #include "db.h"
+#include "utils.h"
 
 
     /**

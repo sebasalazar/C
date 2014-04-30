@@ -1,5 +1,10 @@
+/* 
+ * File:   tareas.h
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
+ *
+ */
+
 #include "tareas.h"
-#include "utils.h"
 
 char** getTiendas(int* num_tiendas) {
     char** tiendas = NULL;
@@ -66,7 +71,6 @@ ventas_mensuales* getVentasMensuales(char* tienda, int* cantidades_ventas) {
         if (conexion != NULL) {
             memset(sql, 0, sizeof (sql));
             snprintf(sql, 512, "SELECT tienda, EXTRACT(month FROM fecha) AS mes,SUM(monto) AS total FROM ventas WHERE tienda = '%s' GROUP BY tienda, mes ORDER BY mes", tienda);
-            fprintf(stderr, "\n%s\n", sql);
             resultado = dbquery(conexion, sql);
             num = dbnumrows(resultado);
             if (num > 0) {

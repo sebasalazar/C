@@ -1,3 +1,9 @@
+/** 
+ * File:   grafico.c
+ * Author: Sebastián Salazar Molina <sebasalazar@gmail.com>
+ *
+ */
+
 #include "grafico.h"
 
 void graficar(ventas_mensuales* ventas) {

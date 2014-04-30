@@ -1,3 +1,9 @@
+/** 
+ * File:   db.c
+ * Author: Sebastián Salazar Molina. <sebasalazar@gmail.com>
+ *
+ */
+
 #include "db.h"
 
 PGconn* dbconnect(char* servidor, int puerto, char* nombredb, char* usuario, char* password) {
