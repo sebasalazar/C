@@ -23,7 +23,6 @@ OBJECTDIR=${CND_BUILDDIR}
 OBJECTFILES= \
 	${OBJECTDIR}/utils.o \
 	${OBJECTDIR}/logger.o \
-	${OBJECTDIR}/socket.o \
 	${OBJECTDIR}/main.o
 
 
@@ -44,7 +43,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-pthread
+LDLIBSOPTIONS=-pthread -lrt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -72,16 +71,12 @@ ${OBJECTDIR}/utils.o: utils.c
 	${RM} $@.d
 	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/utils.o utils.c
 
-${OBJECTDIR}/socket.o: socket.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/socket.o socket.c
-
 # Clean Targets
 clean: ${CLEAN_SUBPROJECTS}
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr ${CND_DISTDIR}
 	${RM} -fr *.log
+	${RM} -fr *.csv
 	${RM} -fr core
 
 # Subprojects

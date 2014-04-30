@@ -13,18 +13,19 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #include "logger.h"
 #include "utils.h"
-#include "socket.h"
 
 struct arg_struct {
     FILE *log;
     byte* datos;
+    int largo_datos;
     char* archivo_salida;
-    char* ip;
-    int puerto;
     int timeout;
+    int repeticiones;
+    struct sockaddr_in servidor;
 };
 
 void *procesar(void* args);
@@ -37,6 +38,10 @@ int main(int argc, char** argv) {
     long usuarios = 0;
     struct arg_struct argumentos;
     int tout = 5;
+    char* ip;
+    int puerto;
+    int repeticiones = 1;
+
     FILE *archivo = fopen("m2nTester.log", "a+");
 
     if (archivo == NULL) {
@@ -45,17 +50,16 @@ int main(int argc, char** argv) {
     }
 
     if (argc < 5) {
-        printf("ERROR\nuse: %s USUARIOS_CONCURRENTES FILE_SEND FILE_RECV IP PORT\n", argv[0]);
+        printf("ERROR\nuse: %s USUARIOS_CONCURRENTES REPETICIONES IP PORT\n", argv[0]);
         logger(archivo, DEBUG_LOG, "Error de uso");
         exit(1);
     }
 
 
-
-    printf("File Send = %s\nFile Recv  = %s\nIP     = %s\nPort     = %s\n", argv[2], argv[3], argv[4], argv[5]);
+    printf("IP     = %s\nPort     = %s\n", argv[3], argv[4]);
     printf("argc = %d\n", argc);
-    if (argc == 7) {
-        tout = atoi(argv[6]);
+    if (argc == 6) {
+        tout = atoi(argv[5]);
     }
     printf("time out %d seg\n", tout);
 
@@ -63,18 +67,32 @@ int main(int argc, char** argv) {
     usuarios = (long) atol(argv[1]);
     pthread_t hilos[usuarios];
 
+    ip = (char *) calloc(strlen(argv[3]) + 1, sizeof (char));
+    sprintf(ip, "%s", argv[3]);
+    puerto = atoi(argv[4]);
+
+    repeticiones = atoi(argv[2]);
+    if (repeticiones > 255) {
+        repeticiones = 256;
+    }
+
+    struct hostent* hostname = gethostbyname(ip);
+    argumentos.servidor.sin_family = AF_INET;
+    argumentos.servidor.sin_port = htons(puerto);
+    bcopy((char *) hostname->h_addr, (char *) &(argumentos.servidor.sin_addr.s_addr), hostname->h_length);
+
     argumentos.log = archivo;
-    argumentos.datos = get_data(argv[2]);
-    argumentos.ip = (char *) calloc(strlen(argv[4]) + 1, sizeof (char));
-    sprintf(argumentos.ip, "%s", argv[4]);
-    argumentos.puerto = atoi(argv[5]);
+    argumentos.datos = static_data();
+    argumentos.largo_datos = 217;
     argumentos.timeout = tout;
+    argumentos.repeticiones = repeticiones;
+
 
     for (u = 0; u < usuarios; u++) {
         logger(archivo, INFO_LOG, "Creando hilo");
         if (pthread_create(&hilos[u], NULL, &procesar, (void *) &argumentos) != 0) {
             logger(archivo, ERROR_LOG, "Error al crear hilo");
-            return -1;
+            // return -1;
         }
     }
 
@@ -91,42 +109,65 @@ int main(int argc, char** argv) {
 
 void *procesar(void *arguments) {
     struct arg_struct *args = arguments;
-    int sockfd, n;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
+    int sockfd, i;
+    long datos_enviados = 0;
+    long datos_recibidos = 0;
+    struct timespec inicio, fin;
+    double transcurrido;
+    int ok = 0;
+    FILE* csv;
+
     byte respuesta[512];
+    char mensaje[512];
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        logger(args->log, ERROR_LOG, "ERROR abriendo socket\n");
-        return NULL;
-    }
+    for (i = 0; i < (args->repeticiones); i++) {
+        datos_enviados = 0;
+        datos_recibidos = 0;
+        ok = 0;
+        clock_gettime(CLOCK_MONOTONIC, &inicio);
 
-    server = gethostbyname(args->ip);
-    if (server == NULL) {
-        logger(args->log, ERROR_LOG, "ERROR, no hay servidor\n");
-        return NULL;
-    }
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd < 0) {
+            logger(args->log, ERROR_LOG, "ERROR abriendo socket\n");
+        } else {
 
-    bzero((char *) &serv_addr, sizeof (serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
-    serv_addr.sin_port = htons(args->puerto);
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
-        logger(args->log, ERROR_LOG, "ERROR al conectar");
-    } else {
-        n = write(sockfd, args->datos, sizeof (args->datos));
-        if (n < 0) {
-            logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
+            if (connect(sockfd, (struct sockaddr *) &(args->servidor), sizeof (args->servidor)) < 0) {
+                logger(args->log, ERROR_LOG, "ERROR al conectar");
+            } else {
+                datos_enviados = send(sockfd, args->datos, args->largo_datos + 2, 0);
+                if (datos_enviados <= 0) {
+                    logger(args->log, ERROR_LOG, "ERROR escribiendo socket");
+                } else {
+                    char* enviado = hex2str(args->datos, datos_enviados);
+                    memset(mensaje, 0, 512);
+                    sprintf(mensaje, "Enviado %ld bytes %s", datos_enviados, enviado);
+                    logger(args->log, DEBUG_LOG, mensaje);
+
+                    datos_recibidos = read(sockfd, respuesta, datos_enviados);
+                    if (datos_recibidos <= 0) {
+                        logger(args->log, ERROR_LOG, "ERROR leyendo del socket");
+                    } else {
+                        char* salida = hex2str(respuesta, datos_recibidos + 1);
+                        memset(mensaje, 0, 512);
+                        sprintf(mensaje, "Recibido %ld bytes %s", datos_recibidos, salida);
+                        logger(args->log, DEBUG_LOG, mensaje);
+                        ok = 1;
+                    }
+                }
+            }
+
+            close(sockfd);
         }
 
-        n = read(sockfd, respuesta, 512);
-        if (n < 0) {
-            logger(args->log, ERROR_LOG, "ERROR reading from socket");
+        clock_gettime(CLOCK_MONOTONIC, &fin);
+        transcurrido = fin.tv_sec - inicio.tv_sec;
+        transcurrido += (fin.tv_nsec - inicio.tv_nsec) / 1000000000.0;
+
+        csv = fopen("resultado.csv", "a+");
+        if (csv != NULL) {
+            fprintf(csv, "%s;%ld;%ld,%d;%lf\n", str_now(), datos_enviados, datos_recibidos, ok, transcurrido);
+            fclose(csv);
         }
-        char* salida = hex2str(respuesta, n);
-        logger(args->log, DEBUG_LOG, salida);
-        close(sockfd);
     }
     return NULL;
 }
