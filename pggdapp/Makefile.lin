@@ -24,7 +24,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/utils.o \
 	${OBJECTDIR}/db.o \
 	${OBJECTDIR}/tareas.o \
-        ${OBJECTDIR}/grafico.o \
+	${OBJECTDIR}/grafico.o \
 	${OBJECTDIR}/main.o
 
 
@@ -45,15 +45,15 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lpq
+LDLIBSOPTIONS=-lpq -lgd
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f Makefile ${CND_DISTDIR}/pgapp
+	"${MAKE}"  -f Makefile ${CND_DISTDIR}/pggdapp
 
-${CND_DISTDIR}/pgapp: ${OBJECTFILES}
+${CND_DISTDIR}/pggdapp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}
-	${LINK.c} -o ${CND_DISTDIR}/pgapp ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.c} -o ${CND_DISTDIR}/pggdapp ${OBJECTFILES} ${LDLIBSOPTIONS} 
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr core
 
@@ -88,7 +88,7 @@ ${OBJECTDIR}/tareas.o: tareas.c
 clean: ${CLEAN_SUBPROJECTS}
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr ${CND_DISTDIR}
-        ${RM} -fr grafico.jpg
+	${RM} -fr grafico.jpg
 	${RM} -fr core
 
 # Subprojects

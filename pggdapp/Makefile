@@ -49,11 +49,11 @@ LDLIBSOPTIONS=-lpq -lgd
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f Makefile ${CND_DISTDIR}/pgapp
+	"${MAKE}"  -f Makefile ${CND_DISTDIR}/pggdapp
 
-${CND_DISTDIR}/pgapp: ${OBJECTFILES}
+${CND_DISTDIR}/pggdapp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}
-	${LINK.c} -o ${CND_DISTDIR}/pgapp ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.c} -o ${CND_DISTDIR}/pggdapp ${OBJECTFILES} ${LDLIBSOPTIONS} 
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr core
 

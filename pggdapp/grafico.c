@@ -16,7 +16,6 @@ void graficar(ventas_mensuales* ventas) {
 
     imagen = gdImageCreateTrueColor(IMG_WIDTH, IMG_HEIGHT);
 
-    int x = 0;
     int y = 0;
     int mes = 0;
     int alto = 50;
@@ -47,12 +46,12 @@ void graficar(ventas_mensuales* ventas) {
         }
 
         // Coloco la etiqueta al costado del gráfico
-        for (y=BORDE_ALTO; y <= (BORDE_ALTO + 500); y = y + 50) {
+        for (y = BORDE_ALTO; y <= (BORDE_ALTO + 500); y = y + 50) {
             // Etiqueta
             gdImageString(imagen, fuente, 5, IMG_HEIGHT - y, (unsigned char *) longStr(paso), negro);
             paso += (maximo / 10);
         }
-        
+
         for (mes = 0; mes < 12; mes++) {
             // Color
             color = gdImageColorAllocate(imagen, color_aleatoreo(), color_aleatoreo(), color_aleatoreo());
@@ -63,6 +62,8 @@ void graficar(ventas_mensuales* ventas) {
 
             // Barra
             gdImageFilledRectangle(imagen, ancho, IMG_HEIGHT - BORDE_ALTO, ancho + 55, IMG_HEIGHT - (BORDE_ALTO + alto), color);
+            // Borde Negro
+            gdImageRectangle(imagen, ancho, IMG_HEIGHT - BORDE_ALTO, ancho + 55, IMG_HEIGHT - (BORDE_ALTO + alto), negro);
             // Etiqueta del Mes
             gdImageString(imagen, fuente, ancho + 15, IMG_HEIGHT - BORDE_ALTO + 5, (unsigned char *) etiquetaMes(ventas[mes].mes), color);
             // Monto
@@ -79,9 +80,11 @@ void graficar(ventas_mensuales* ventas) {
 
 
         // Guardar imagen
-        archivo = fopen("grafico.jpg", "w");
-        gdImageJpeg(imagen, archivo, 100);
-        fclose(archivo);
+        archivo = fopen("grafico.jpg", "wb");
+        if (archivo != NULL) {
+            gdImageJpeg(imagen, archivo, 100);
+            fclose(archivo);
+        }
         gdImageDestroy(imagen);
     }
 }
