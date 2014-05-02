@@ -12,6 +12,7 @@ void graficar(ventas_mensuales* ventas) {
     FILE *archivo;
     char titulo[513];
     int blanco, negro, color;
+    gdFontPtr fuente = gdFontGetSmall();
 
     imagen = gdImageCreateTrueColor(IMG_WIDTH, IMG_HEIGHT);
 
@@ -35,7 +36,7 @@ void graficar(ventas_mensuales* ventas) {
         // Coloco el título
         memset(titulo, 0, 513);
         snprintf(titulo, 512, "Ventas Anuales tienda %s", ventas[0].tienda);
-        gdImageString(imagen, gdFontSmall, (int) IMG_WIDTH * 0.4, 25, (unsigned char *) titulo, negro);
+        gdImageString(imagen, fuente, (int) IMG_WIDTH * 0.4, 25, (unsigned char *) titulo, negro);
 
         // Buscamos el máximo
         for (mes = 0; mes < 12; mes++) {
@@ -48,7 +49,7 @@ void graficar(ventas_mensuales* ventas) {
         // Coloco la etiqueta al costado del gráfico
         for (y=BORDE_ALTO; y <= (BORDE_ALTO + 500); y = y + 50) {
             // Etiqueta
-            gdImageString(imagen, gdFontSmall, 5, IMG_HEIGHT - y, (unsigned char *) longStr(paso), negro);
+            gdImageString(imagen, fuente, 5, IMG_HEIGHT - y, (unsigned char *) longStr(paso), negro);
             paso += (maximo / 10);
         }
         
@@ -63,9 +64,9 @@ void graficar(ventas_mensuales* ventas) {
             // Barra
             gdImageFilledRectangle(imagen, ancho, IMG_HEIGHT - BORDE_ALTO, ancho + 55, IMG_HEIGHT - (BORDE_ALTO + alto), color);
             // Etiqueta del Mes
-            gdImageString(imagen, gdFontSmall, ancho + 15, IMG_HEIGHT - BORDE_ALTO + 5, (unsigned char *) etiquetaMes(ventas[mes].mes), color);
+            gdImageString(imagen, fuente, ancho + 15, IMG_HEIGHT - BORDE_ALTO + 5, (unsigned char *) etiquetaMes(ventas[mes].mes), color);
             // Monto
-            gdImageString(imagen, gdFontSmall, ancho, IMG_HEIGHT - (BORDE_ALTO + alto + 20), (unsigned char *) longStr(ventas[mes].monto), color);
+            gdImageString(imagen, fuente, ancho, IMG_HEIGHT - (BORDE_ALTO + alto + 20), (unsigned char *) longStr(ventas[mes].monto), color);
             ancho += 55;
         }
 

@@ -44,7 +44,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS= -L".\win32\lib" -lpq -lgd
+LDLIBSOPTIONS= -L".\win32\lib" -lpq -lbgd
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
