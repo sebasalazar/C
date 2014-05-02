@@ -2,7 +2,28 @@
 <configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="dist">
+      </df>
       <df name="win32">
+        <df name="include">
+          <in>entities.h</in>
+          <in>gd.h</in>
+          <in>gd_io.h</in>
+          <in>gdcache.h</in>
+          <in>gdfontg.h</in>
+          <in>gdfontl.h</in>
+          <in>gdfontmb.h</in>
+          <in>gdfonts.h</in>
+          <in>gdfontt.h</in>
+          <in>gdfx.h</in>
+          <in>gdhelpers.h</in>
+          <in>jisx0208.h</in>
+          <in>libpq-fe.h</in>
+          <in>postgres_ext.h</in>
+          <in>wbmp.h</in>
+        </df>
+        <df name="lib">
+        </df>
         <in>libpq-fe.h</in>
         <in>postgres_ext.h</in>
       </df>
@@ -104,7 +125,6 @@
         <runcommand>"${OUTPUT_PATH}"</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
-        <console-type>1</console-type>
         <terminal-type>1</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>
         <environment>

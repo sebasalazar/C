@@ -31,7 +31,7 @@ OBJECTFILES= \
 #DEBUG
 #CFLAGS=-Wall -DDEBUG -g3
 #Sin Debug
-CFLAGS=-Wall -g3 -I".\win32"
+CFLAGS=-Wall -g3 -I".\win32\include"
 
 # CC Compiler Flags
 CCFLAGS=
@@ -44,16 +44,16 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS= -L".\win32" -lpq 
+LDLIBSOPTIONS= -L".\win32\lib" -lpq -lgd
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f Makefile.win ${CND_DISTDIR}/pgapp
+	"${MAKE}"  -f Makefile.win ${CND_DISTDIR}/pggdapp
 
-${CND_DISTDIR}/pgapp: ${OBJECTFILES}
+${CND_DISTDIR}/pggdapp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}
-	${LINK.c} -o ${CND_DISTDIR}/pgapp ${OBJECTFILES} ${LDLIBSOPTIONS}
-	${CP} win32/*.dll ${CND_DISTDIR}/
+	${LINK.c} -o ${CND_DISTDIR}/pggdapp ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${CP} win32/lib/*.dll ${CND_DISTDIR}/
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr core
 
@@ -88,7 +88,7 @@ ${OBJECTDIR}/tareas.o: tareas.c
 clean: ${CLEAN_SUBPROJECTS}
 	${RM} -fr ${CND_BUILDDIR}
 	${RM} -fr ${CND_DISTDIR}
-        ${RM} -fr grafico.jpg
+	${RM} -fr grafico.jpg
 	${RM} -fr core
 
 # Subprojects
