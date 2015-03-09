@@ -2,8 +2,6 @@
 <configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
-      <df name="dist">
-      </df>
       <df name="win32">
         <df name="include">
           <in>entities.h</in>
@@ -24,8 +22,6 @@
         </df>
         <df name="lib">
         </df>
-        <in>libpq-fe.h</in>
-        <in>postgres_ext.h</in>
       </df>
       <in>comun.h</in>
       <in>db.c</in>
