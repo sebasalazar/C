@@ -4,6 +4,8 @@
     <df root="." name="0">
       <in>apachelog_utils.c</in>
       <in>apachelog_utils.h</in>
+      <in>arbol.c</in>
+      <in>arbol.h</in>
       <in>comun.c</in>
       <in>comun.h</in>
       <in>csv_utils.c</in>

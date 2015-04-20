@@ -21,6 +21,7 @@ OBJECTDIR=${CND_BUILDDIR}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/arbol.o \
 	${OBJECTDIR}/comun.o \
 	${OBJECTDIR}/ip_utils.o \
 	${OBJECTDIR}/xml_utils.o \
@@ -62,6 +63,11 @@ ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/arbol.o: arbol.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(CC) $(CFLAGS) -c -MMD -MP -MF $@.d -o ${OBJECTDIR}/arbol.o arbol.c
 
 ${OBJECTDIR}/comun.o: comun.c
 	${MKDIR} -p ${OBJECTDIR}
