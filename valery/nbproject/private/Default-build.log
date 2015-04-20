@@ -1,0 +1,17 @@
+mkdir -p build
+rm -f build/alarma.o.d
+gcc -Wall -g3 -c -MMD -MP -MF build/alarma.o.d -o build/alarma.o alarma.c
+mkdir -p build
+rm -f build/main.o.d
+gcc -Wall -g3 -c -MMD -MP -MF build/main.o.d -o build/main.o main.c
+In file included from main.c:10:0:
+alarma.h:33:16: aviso: se define ‘genero_alarma’ pero no se usa [-Wunused-variable]
+     static int genero_alarma = 0;
+                ^
+mkdir -p dist
+gcc -Wall -g3    -o dist/alarmador build/alarma.o build/main.o -lwinmm -lws2_32 -lgdi32 
+/usr/lib64/gcc/x86_64-slackware-linux/4.8.4/../../../../x86_64-slackware-linux/bin/ld: no se puede encontrar -lwinmm
+/usr/lib64/gcc/x86_64-slackware-linux/4.8.4/../../../../x86_64-slackware-linux/bin/ld: no se puede encontrar -lws2_32
+/usr/lib64/gcc/x86_64-slackware-linux/4.8.4/../../../../x86_64-slackware-linux/bin/ld: no se puede encontrar -lgdi32
+collect2: error: ld devolvió el estado de salida 1
+gmake: *** [dist/alarmador] Error 1
