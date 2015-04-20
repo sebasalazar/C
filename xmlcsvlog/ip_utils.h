@@ -33,7 +33,7 @@ extern "C" {
      * @return la representación con puntos de la ip
      */
     char* numero2ip(unsigned long numero);
-    
+
     /**
      * Determina si es una ipv4
      * @param ip representación con puntos de la ip
@@ -41,6 +41,12 @@ extern "C" {
      */
     int es_ipv4(char *ip);
 
+    /**
+     * Determina la cantidad de equipos que están en la red según el cidr dado
+     * @param cidr
+     * @return el número de ip de dicha red
+     */
+    unsigned long cantidad_direcciones(int cidr);
 #ifdef	__cplusplus
 }
 #endif

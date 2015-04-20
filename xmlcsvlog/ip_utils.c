@@ -76,3 +76,12 @@ int es_ipv4(char *ip) {
     freeaddrinfo(res);
     return ipv4;
 }
+
+unsigned long cantidad_direcciones(int cidr) {
+    unsigned long total = 0;
+    /* Valido que el sufijo cidr sea válido */
+    if (cidr >= 0 && cidr <= 32) {
+        total = pow(2, 32 - cidr);
+    }
+    return total;
+}

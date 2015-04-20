@@ -14,11 +14,21 @@
  */
 int main(int argc, char** argv) {
 
+    unsigned long i;
     char *ip = calloc(16, sizeof (char));
-    sprintf(ip,"%s", "127.0.0.1");
-    unsigned int numero = ip2numero(ip);
+    unsigned long numero = 0;
+    unsigned long total = 0;
 
-    printf("\n %d %s \n", numero, numero2ip(numero));
+    
+    sprintf(ip, "%s", "146.83.0.0");
+    numero = ip2numero(ip);
+    total = cantidad_direcciones(16);
+    
+    printf("\n%ld %ld\n", numero, total);
+    
+    for (i = numero; i < (numero + total); i++) {
+        printf("%s\n", numero2ip(i));
+    }
 
     return (EXIT_SUCCESS);
 }
