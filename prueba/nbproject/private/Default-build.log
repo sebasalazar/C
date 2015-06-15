@@ -1,0 +1,6 @@
+mkdir -p dist
+gcc -c main.c -o build/main.o
+gcc: error: main.c: No such file or directory
+gcc: fatal error: no input files
+compilation terminated.
+gmake: *** [dist/suma] Error 1

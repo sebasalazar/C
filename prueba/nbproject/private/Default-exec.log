@@ -1,0 +1,8 @@
+called: gcc
+	/home/seba/sources/C/prueba
+	gcc
+	-c
+	main.c
+	-o
+	build/main.o
+
