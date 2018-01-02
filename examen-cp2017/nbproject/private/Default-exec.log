@@ -1,0 +1,8 @@
+called: gcc
+	/home/seba/sources/C/examen-cp2017
+	gcc
+	-c
+	main.c
+	-o
+	build/main.o
+

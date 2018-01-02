@@ -1,0 +1,8 @@
+mkdir -p build
+mkdir -p dist
+gcc -c main.c -o build/main.o
+gcc: error: main.c: No existe el archivo o el directorio
+gcc: fatal error: no input files
+compilation terminated.
+Makefile:53: fallo en las instrucciones para el objetivo 'dist/integral'
+make: *** [dist/integral] Error 1
