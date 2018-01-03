@@ -14,10 +14,10 @@ vector<Monomio> convertir(string polinomioStr) {
     if (!polinomioStr.empty()) {
         string resultado = quitar_espacio(polinomioStr);
         vector<string> terminos = obtener_terminos(resultado);
-        std::vector<int>::size_type i = 0;
 
 #pragma omp parallel
         {
+            std::vector<int>::size_type i = 0;
             vector<Monomio> polinomio;
 
 #pragma omp parallel for private(i)
@@ -27,6 +27,8 @@ vector<Monomio> convertir(string polinomioStr) {
                 Monomio monomio = str2Monomio(valor);
                 polinomio.push_back(monomio);
             }
+
+#pragma omp critical
             listado = polinomio;
         }
 
@@ -36,24 +38,27 @@ vector<Monomio> convertir(string polinomioStr) {
 
 vector<string> obtener_terminos(string polinomioStr) {
     vector<string> elementos;
+    if (!polinomioStr.empty()) {
 
-    char* str = (char *) polinomioStr.c_str();
-    char* token;
+        char* str = new char[polinomioStr.size() + 1];
+        strncpy(str, polinomioStr.c_str(), polinomioStr.size());
 
-    token = strtok(str, "+-");
-    while (token != NULL) {
-        string elemento = token;
-        elementos.push_back(elemento);
-        token = strtok(NULL, "+-");
+        char* token = strtok(str, "+-");
+        while (token != NULL) {
+            string elemento = token;
+            elementos.push_back(elemento);
+            token = strtok(NULL, "+-");
+        }
+        delete str;
     }
-
     return elementos;
 }
 
-Monomio str2Monomio(string str) {
+Monomio str2Monomio(string texto) {
     Monomio mono;
 
-    if (!str.empty()) {
+    if (!texto.empty()) {
+        string str = texto;
         unsigned int pos = str.find("x**");
         if (pos > 0) {
             string coefStr = str.substr(0, pos);
@@ -93,6 +98,8 @@ double integrar_evaluar(vector<Monomio> polinomio, int inferior, int superior) {
 #pragma omp atomic
             suma += ((integrada.GetCoeficiente() * pow(superior, integrada.GetGrado()))-(integrada.GetCoeficiente() * pow(inferior, integrada.GetGrado())));
         }
+
+#pragma omp critical
         resultado = suma;
     }
 

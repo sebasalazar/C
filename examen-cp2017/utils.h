@@ -26,7 +26,7 @@ vector<Monomio> convertir(string polinomioStr);
 
 vector<string> obtener_terminos(string polinomioStr);
 
-Monomio str2Monomio(string str);
+Monomio str2Monomio(string texto);
 
 double integrar_evaluar(vector<Monomio> polinomio, int inferior, int superior);
 

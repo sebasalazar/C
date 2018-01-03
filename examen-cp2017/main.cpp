@@ -24,12 +24,12 @@ int main(int argc, char** argv) {
     string polinomio = argv[1];
     int inferior = atoi(argv[2]);
     int superior = atoi(argv[3]);
-    cout << "polinomio: " << polinomio << endl;
+    cout << endl << "polinomio (cmd): " << polinomio << endl;
     cout << "Limite inferior: " << inferior << endl;
     cout << "Limite superior: " << superior << endl;
 
+    cout << "polinomio (convertido): ";
     vector<Monomio> monomios = convertir(polinomio);
-    cout << endl;
     vector<Monomio>::size_type i = 0;
     for (i = 0; i < monomios.size(); i++) {
         Monomio monomio = monomios[i];
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     cout << endl;
 
     double resultado = integrar_evaluar(monomios, inferior, superior);
-    cout << endl << "Resultado: " << resultado << endl;
+    cout << "Resultado: " << resultado << endl;
 
     return EXIT_SUCCESS;
 }
