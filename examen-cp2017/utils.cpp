@@ -10,19 +10,28 @@ string quitar_espacio(string texto) {
 }
 
 vector<Monomio> convertir(string polinomioStr) {
-    vector<Monomio> polinomio;
+    vector<Monomio> listado;
     if (!polinomioStr.empty()) {
         string resultado = quitar_espacio(polinomioStr);
         vector<string> terminos = obtener_terminos(resultado);
-        for (std::vector<int>::size_type i = 0; i < terminos.size(); i++) {
-            string valor = terminos[i];
-            cout << valor << endl;
-            Monomio monomio = str2Monomio(valor);
-            cout << monomio.GetCoeficiente() << "x^" << monomio.GetGrado() << endl;
-            polinomio.push_back(monomio);
+        std::vector<int>::size_type i = 0;
+
+#pragma omp parallel
+        {
+            vector<Monomio> polinomio;
+
+#pragma omp parallel for private(i)
+            for (i = 0; i < terminos.size(); i++) {
+
+                string valor = terminos[i];
+                Monomio monomio = str2Monomio(valor);
+                polinomio.push_back(monomio);
+            }
+            listado = polinomio;
         }
+
     }
-    return polinomio;
+    return listado;
 }
 
 vector<string> obtener_terminos(string polinomioStr) {
@@ -49,7 +58,7 @@ Monomio str2Monomio(string str) {
         if (pos > 0) {
             string coefStr = str.substr(0, pos);
             mono.SetCoeficiente(atof(coefStr.c_str()));
-            
+
             unsigned int resto = pos + 3;
             if (str.size() >= resto) {
                 string gradoStr = str.substr(resto, str.size() - 1);
@@ -65,4 +74,27 @@ Monomio str2Monomio(string str) {
     }
 
     return mono;
+}
+
+double integrar_evaluar(vector<Monomio> polinomio, int inferior, int superior) {
+    double resultado;
+
+#pragma omp parallel
+    {
+        vector<Monomio>::size_type i;
+        double suma = (double) 0;
+#pragma omp parallel for private(i)
+        for (i = 0; i < polinomio.size(); i++) {
+            Monomio monomio = polinomio[i];
+            Monomio integrada;
+            integrada.SetCoeficiente(monomio.GetCoeficiente() / (monomio.GetGrado() + 1));
+            integrada.SetGrado(monomio.GetGrado() + 1);
+
+#pragma omp atomic
+            suma += ((integrada.GetCoeficiente() * pow(superior, integrada.GetGrado()))-(integrada.GetCoeficiente() * pow(inferior, integrada.GetGrado())));
+        }
+        resultado = suma;
+    }
+
+    return resultado;
 }

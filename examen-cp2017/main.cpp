@@ -29,7 +29,16 @@ int main(int argc, char** argv) {
     cout << "Limite superior: " << superior << endl;
 
     vector<Monomio> monomios = convertir(polinomio);
+    cout << endl;
+    vector<Monomio>::size_type i = 0;
+    for (i = 0; i < monomios.size(); i++) {
+        Monomio monomio = monomios[i];
+        cout << monomio.GetCoeficiente() << "x^" << monomio.GetGrado() << " ";
+    }
+    cout << endl;
 
+    double resultado = integrar_evaluar(monomios, inferior, superior);
+    cout << endl << "Resultado: " << resultado << endl;
 
     return EXIT_SUCCESS;
 }
